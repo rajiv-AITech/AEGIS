@@ -233,9 +233,13 @@ function DigitalTwin({devices,agents}){
 
     const doorObjs=[];
     [{pos:[-1.5,0.28,5.5]},{pos:[2,0.28,-5.5]},{pos:[-7,0.28,0]},{pos:[9,0.28,3.1]}].forEach(d=>{
-      const sMat=new THREE.MeshBasicMaterial({color:0xffaa00,transparent:true,opacity:0.9});scene.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.24,14,14),sMat),{position:{...{x:d.pos[0],y:d.pos[1],z:d.pos[2]}},...(()=>{const m=new THREE.Mesh(new THREE.SphereGeometry(0.24,14,14),sMat);m.position.set(...d.pos);scene.add(m);return {};})()}));
-      const r1Mat=new THREE.MeshBasicMaterial({color:0xffcc44,transparent:true,opacity:0.55,side:THREE.DoubleSide});const r1=new THREE.Mesh(new THREE.RingGeometry(0.34,0.48,20),r1Mat);r1.position.set(...d.pos);r1.rotation.x=-Math.PI/2;scene.add(r1);
-      const r2Mat=new THREE.MeshBasicMaterial({color:0xffcc44,transparent:true,opacity:0.25,side:THREE.DoubleSide});const r2=new THREE.Mesh(new THREE.RingGeometry(0.54,0.62,20),r2Mat);r2.position.set(...d.pos);r2.rotation.x=-Math.PI/2;scene.add(r2);
+      const sMat=new THREE.MeshBasicMaterial({color:0xffaa00,transparent:true,opacity:0.9});
+      const sphere=new THREE.Mesh(new THREE.SphereGeometry(0.24,14,14),sMat);
+      sphere.position.set(...d.pos);scene.add(sphere);
+      const r1Mat=new THREE.MeshBasicMaterial({color:0xffcc44,transparent:true,opacity:0.55,side:THREE.DoubleSide});
+      const r1=new THREE.Mesh(new THREE.RingGeometry(0.34,0.48,20),r1Mat);r1.position.set(...d.pos);r1.rotation.x=-Math.PI/2;scene.add(r1);
+      const r2Mat=new THREE.MeshBasicMaterial({color:0xffcc44,transparent:true,opacity:0.25,side:THREE.DoubleSide});
+      const r2=new THREE.Mesh(new THREE.RingGeometry(0.54,0.62,20),r2Mat);r2.position.set(...d.pos);r2.rotation.x=-Math.PI/2;scene.add(r2);
       doorObjs.push({sMat,r1Mat,r2Mat});
     });
     sceneRefs.current.doorObjs=doorObjs;
