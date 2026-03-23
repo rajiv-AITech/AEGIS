@@ -22,7 +22,7 @@ Built on top of the Alarm.com capability model and extended with agentic AI, Aeg
 
 ## Live Demo
 
-Deployed at: **[https://your-aegis-url.vercel.app](https://your-aegis-url.vercel.app)**
+Deployed at: **[https://aegis-five-theta.vercel.app/](https://aegis-five-theta.vercel.app/)**
 
 ---
 
