@@ -291,7 +291,7 @@ Aegis ships with 6 pre-configured autonomous agents:
 | Smart Access Controller | Active | Tracked | Manages lock/unlock schedules, visitor access codes, and anomalous entry attempts |
 | Energy Optimizer (PEMS) | Active | Tracked | Grid-interactive load management, TOU optimization, demand response |
 | Remote Video Monitor | Active | Tracked | 24/7 AI video review — flags high-confidence human/vehicle events, suppresses false positives |
-| Wellness Sentinel | Paused | Tracked | Tracks occupancy patterns and alerts trusted contacts on unusual inactivity |
+| Wellness Aegis | Paused | Tracked | Tracks occupancy patterns and alerts trusted contacts on unusual inactivity |
 
 Each agent is fully toggle-able from the Agents tab. The PEMS priority rule is enforced in the Energy Optimizer's system prompt: **Safety > Security > Energy Efficiency**.
 
