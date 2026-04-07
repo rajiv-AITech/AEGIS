@@ -36,11 +36,10 @@ const card = (extra?: React.CSSProperties): React.CSSProperties => ({
   borderRadius: 10, padding: 16, ...extra,
 });
 
-const statCard = (accent: string): React.CSSProperties => ({
+const statCard = (): React.CSSProperties => ({
   background: 'var(--bg2)', border: '1px solid var(--border)',
   borderRadius: 10, padding: '14px 16px', position: 'relative', overflow: 'hidden',
-  '--accent-color': accent,
-} as React.CSSProperties);
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Lightweight live-feed hook
@@ -228,7 +227,7 @@ export default function App() {
               { n: '1.6M', l: 'Grid-Edge Devices', sub: '44 GWh shifted 2024', c: '#f59e0b' },
               { n: '10,247', l: 'Active Service Providers', sub: '94 AI-tier partners', c: '#8b5cf6' },
             ].map((s, i) => (
-              <div key={i} style={{ ...statCard(s.c) }}>
+              <div key={i} style={{ ...statCard() }}>
                 <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: 2, background: s.c }} />
                 <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 700, color: 'var(--text)' }}>{s.n}</div>
                 <div style={{ fontSize: 11, color: 'var(--text2)', marginTop: 2 }}>{s.l}</div>
@@ -360,7 +359,7 @@ export default function App() {
               { n: '$122.5M', l: 'GAAP Net Income 2024', sub: '↑ 53% from $80.3M', c: '#f59e0b' },
               { n: '$176M', l: 'Adj. EBITDA 2024', sub: 'Strong operational leverage', c: '#8b5cf6' },
             ].map((s, i) => (
-              <div key={i} style={{ ...statCard(s.c) }}>
+              <div key={i} style={{ ...statCard() }}>
                 <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: 2, background: s.c }} />
                 <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 700, color: 'var(--text)' }}>{s.n}</div>
                 <div style={{ fontSize: 11, color: 'var(--text2)', marginTop: 2 }}>{s.l}</div>
