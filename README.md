@@ -1,395 +1,300 @@
-# ⬡ Aegis
+# Aegis v2 -- Autonomous Property Intelligence Platform
+
 ### Your Jarvis for Autonomous Energy & Guard Intelligence System
 
-> A full-stack, AI-native smart property platform that unifies security, energy management, IoT sensors, and a live 3D Digital Twin into a single autonomous operating layer — powered by Claude AI agents.
+> **v2 extends Aegis v1 with four business-layer capabilities:** Service Provider Intelligence, AI Resolution Rate (ARR) Metrics, Commercial Property AI, and a Domain Ontology Explorer -- transforming Aegis from a proof-of-concept architecture into a full platform intelligence thesis.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/aegis)
+[![Live Demo v1](https://img.shields.io/badge/Live%20Demo-v1-3b82f6)](https://aegis-five-theta.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Branch: aegis-v2](https://img.shields.io/badge/branch-aegis--v2-8b5cf6)](https://github.com/rajiv-AITech/AEGIS/tree/aegis-v2)
+
+---
+
+## Live Demos
+
+| Version | URL | Deployment |
+|---------|-----|------------|
+| **v1** | [aegis-five-theta.vercel.app](https://aegis-five-theta.vercel.app) | React + Vite (main branch) |
+| **v2** | Your Vercel URL after deploy | Static HTML (aegis-v2 branch) |
+
+---
+
+## v1 -> v2: The Progression
+
+| | **Aegis v1** (`main`) | **Aegis v2** (`aegis-v2`) |
+|---|---|---|
+| **Focus** | Platform architecture proof-of-concept | Business intelligence + monetization layer |
+| **Core question** | *Can AID, EnergyHub, and OpenEye be unified into a single AI layer?* | *How does that unification create measurable business value?* |
+| **Deployment** | React 18 + TypeScript + Vite build | Single HTML file -- zero build step |
+| **New in v2** | -- | SP Intelligence, ARR Metrics, Commercial AI, Domain Ontology, EV Grid |
+| **Claude API** | Security context, PEMS advisor, NL Automation | + SP analysis, ARR insight, zone alert, ontology NL query |
 
 ---
 
 ## What is Aegis?
 
-Aegis is not a security camera app. It is an **autonomous property intelligence platform** — the operating system for your home or business that continuously monitors, reasons, and acts across three domains simultaneously:
+Aegis is not a security camera app. It is an **autonomous property intelligence platform** -- the AI-native operating system for intelligently connected properties. It unifies security, energy, and commercial intelligence into a single agent-powered layer built on top of the Alarm.com capability model.
 
-- **Security** — AI agents detect, deter, and escalate threats in real time across cameras, sensors, and access points
-- **Energy** — Predictive Energy Management (PEMS) shifts loads, responds to grid pricing signals, and protects your security mesh during outages
-- **Awareness** — A live 3D Digital Twin renders your physical property with real-time IoT sensor overlays, lighting heatmaps, and motion zones
-
-Built on top of the Alarm.com capability model and extended with agentic AI, Aegis goes beyond monitoring — it acts.
+**The core thesis:** AID, EnergyHub, OpenEye, and CHeKT are powerful point solutions operating in isolation. Each generates data. None share intelligence. The compounding opportunity is to build a shared intelligence layer -- a unified domain ontology, shared training pipelines, and cross-domain agentic workflows -- that transforms a portfolio of features into a platform moat.
 
 ---
 
-## Live Demo
+## v2 Feature Deep-Dive
 
-Deployed at: **[https://aegis-five-theta.vercel.app/](https://aegis-five-theta.vercel.app/)**
+### 1. Service Provider Intelligence
+*The partner channel made intelligent*
+
+Alarm.com's model is SP-led: 10,000+ service providers are the delivery channel. v2 adds a **Partner AI Performance Dashboard** that makes fleet-wide AI resolution metrics visible to SP operators for the first time.
+
+- Per-SP AI Resolution Rate, threat score, energy savings, RVM event count
+- Tier classification: Standard -> Pro AI -> Enterprise AI
+- **$71.2M incremental ARR opportunity** from 2,847 standard SPs meeting AI-tier criteria
+- AI-tier monetization: prices **per outcome** (verified resolutions, energy savings) not per subscriber
+- Claude integration: `spAnalysis()` -- real-time partner network recommendations
+
+### 2. AI Resolution Rate (ARR) Metrics
+*The outcome-based pricing proof point*
+
+The single most important metric for an AI platform monetization strategy.
+
+- **87.4% platform-wide ARR** vs 61% human-only baseline (26.4 point improvement)
+- Full resolution funnel: 162,300 events -> 141,801 auto-resolved -> 18,200 escalated -> 2,100 dispatched
+- ARR by agent: Energy Optimizer leads at 96.1%, Smart Access lowest at 79.8%
+- **~$340M/yr addressable outcome premium** at $4/resolved event at current scale
+- Live event log with real-time simulation
+- Claude integration: `arrInsight()` -- executive business impact summary
+
+### 3. Commercial Property Intelligence
+*AI-native operations for the fastest-growing segment*
+
+Commercial SaaS grew ~25% YoY to $80M+ in 2024. Commercial properties require fundamentally different AI:
+
+- **Multi-Zone Threat Intelligence** -- 6 zones with real-time threat scores, AI Deterrence auto-engages on behavioral deviation
+- **Shift-Aware Access Control** -- role x time x zone behavioral baseline; unknown badge triggers immediate deny + AI alert
+- **24-Hour Shift Timeline** -- every automation, escalation, and energy decision with full context
+- Claude integration: `commercialZoneAlert()` -- zone-specific incident response protocol
+
+### 4. Domain Intelligence Ontology
+*The hardest architectural problem -- now visible*
+
+AID, EnergyHub, and OpenEye each built independent data models. The shared domain ontology is the translation layer enabling cross-domain intelligence.
+
+- **13 node classes** across 4 domains: Property Types, Security, Energy, Behavioral Intelligence
+- **847 property-type nodes** trained on 9.3M subscriber behavioral signals
+- **3,241 entity relationships** across AID, EnergyHub, OpenEye, CHeKT
+- **142 threat pattern types**, **89 energy profiles**
+- Natural language query interface -- ask the knowledge graph in plain English
+- Claude integration: `queryOntology()` -- NL reasoning across the ontology
+
+### 5. EnergyHub + EV Grid Intelligence
+*The GM partnership -- engineered*
+
+- **Live EV SOC tracking** with charging optimization against TOU windows
+- **GM partnership**: Chevy, GMC, Cadillac EVs + PowerBank storage enrolled in utility DR programs
+- **PEMS priority stack**: Safety > Security Mesh (protected) > Energy Efficiency
+- **2024 impact**: 2,000+ utility grid calls, 44 GWh peak demand shifted
+- **Dynamic load-shaping**: AI-driven DER coordination across batteries, thermostats, EVs
 
 ---
 
-## Feature Overview
+## Full Tab Reference
 
-### 9 Navigation Tabs — All Fully Functional
+| Tab | v1/v2 | What it does |
+|-----|-------|--------------|
+| **Dashboard** | v1 + v2 stats | Unified view, live intelligence feed, growth vectors, v2 module cards |
+| **AI Agents** | v1 | 6 autonomous agents with ARR, trigger counts, live status |
+| **Cameras** | v1 | Animated canvas feeds with AI bounding boxes |
+| **EnergyHub + EV** | v1 + EV v2 | PEMS dashboard + EV fleet + GM partnership |
+| **SP Intelligence** | **v2 NEW** | Partner AI performance, tier analysis, upgrade pipeline |
+| **AI Resolution** | **v2 NEW** | ARR funnel, live event log, by-agent breakdown, business impact |
+| **Commercial AI** | **v2 NEW** | Multi-zone threat, shift-aware access, 24hr timeline |
+| **Domain Ontology** | **v2 NEW** | 13-node knowledge graph, NL query, node detail explorer |
+| **Analytics** | v1 + v2 | Financial metrics, AI platform ROI model |
 
-| Tab | What it does |
-|---|---|
-| **Dashboard** | Live threat ring, stat tiles, camera grid, event feed, PEMS status banner, AI chat |
-| **Cameras** | 6 animated canvas feeds with real-time AI bounding boxes, event clips, natural language video search |
-| **Devices** | Full device inventory across Entry, Perimeter, Garage, Interior zones — toggle locks/doors live |
-| **Agents** | 6 autonomous AI agents — toggle active/paused, view trigger counts and last-fired times |
-| **Automations** | Trigger-based workflows + NL Automation Builder (describe in plain English → Claude parses to structured rule) |
-| **Properties** | Multi-location management — Great Falls Residence, Shenandoah Cabin, Tysons Office |
-| **EnergyHub** | PEMS dashboard — TOU pricing, load shedding, NILM alerts, battery/UPS gauge, 24h power chart, grid-interactive recommendations |
-| **Digital Twin** | Live Three.js 3D building — Security / Energy / Combined view modes, drag-to-rotate, light zone controls |
-| **Analytics** | Weekly heatmap, AI-generated intelligence summary, cross-property stats |
-| **Settings** | Full platform config — AI sensitivity, TOU provider, NILM toggle, multi-property sync, agent auto-learning |
+---
+
+## AI Agent Inventory
+
+| Agent | Status | ARR | Domain |
+|---|---|---|---|
+| AI Deterrence | Active | 91.2% | Security |
+| Remote Video Monitor | Active | 88.7% | Security |
+| Energy Optimizer (PEMS) | Active | 96.1% | Energy |
+| Smart Access Controller | Active | 79.8% | Security |
+| Perimeter Guard | Active | 84.3% | Security |
+| Wellness Aegis | Paused | N/A | Safety |
+
+**Platform-wide ARR: 87.4%** (vs 61% human-only baseline)
+
+---
+
+## Deployment
+
+### v2 Branch -- Zero Build Step (Static HTML)
+
+v2 is a single self-contained HTML file. No npm, no build pipeline, no TypeScript compilation. Vercel serves it directly as a static asset.
+
+**Step 1 -- Push to Vercel**
+
+```bash
+git clone https://github.com/rajiv-AITech/AEGIS.git
+cd AEGIS
+git checkout aegis-v2
+```
+
+Only two files matter for deployment:
+- `index.html` -- the entire application
+- `vercel.json` -- instructs Vercel to skip the build
+
+**Step 2 -- Configure Vercel project settings**
+
+In Vercel dashboard -> Settings -> Build & Development Settings:
+- **Framework Preset:** Other
+- **Build Command:** (leave empty)
+- **Output Directory:** `.` (single dot)
+- **Install Command:** (leave empty)
+
+**Step 3 -- Deploy**
+
+```bash
+git push origin aegis-v2
+# Vercel auto-deploys -- no build log, instant static serve
+```
+
+**Why no build step?** v2 loads React 18 and Babel from CDN via `<script>` tags, then compiles JSX in the browser at runtime. This eliminates the entire Vite/TypeScript/esbuild pipeline while keeping the full React component model. The tradeoff is a ~2 second initial parse time vs a pre-built bundle.
+
+---
+
+## Claude API Setup
+
+The AI features (ontology queries, SP analysis, zone alerts, ARR insights) require an Anthropic API key.
+
+**In the live app:**
+1. Click **"API Key"** button in the top-right header
+2. Enter your key: `sk-ant-api03-...`
+3. Click **Save** -- the key is stored in `localStorage` only, never transmitted anywhere except Anthropic's API
+
+**Get a key:** [console.anthropic.com](https://console.anthropic.com)
+
+**Model used:** `claude-sonnet-4-20250514`
+
+The app is fully functional without a key -- all UI, simulations, and data are built-in. The API key only enables the live Claude responses in the four AI-powered panels.
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                        Aegis Platform                    │
-├──────────────┬──────────────────┬───────────────────────┤
-│   Security   │   Energy (PEMS)  │   Digital Twin        │
-│   Mesh       │   Grid-Interactive│  Three.js 3D Scene   │
-├──────────────┴──────────────────┴───────────────────────┤
-│              Claude AI Agent Layer                       │
-│  Deterrence · Perimeter · Access · Energy · RVM · Wellness│
-├─────────────────────────────────────────────────────────┤
-│              Zustand State Stores (persisted)            │
-│  useDeviceStore · useAgentStore · useAutomationStore     │
-├─────────────────────────────────────────────────────────┤
-│              React 18 + TypeScript + Vite 5              │
-└─────────────────────────────────────────────────────────┘
+Aegis v2 -- Static Architecture
++------------------------------------------+
+|  index.html (single file, ~60KB)         |
++------------------+-----------------------+
+|  React 18 (CDN)  |  Babel (CDN, runtime) |
++------------------+-----------------------+
+|  9 Tab Components (all inline)            |
+|  SP Intel - ARR - Commercial - Ontology  |  <- v2 NEW
+|  Dashboard - Agents - Cameras - Energy   |  <- v1 core
++------------------------------------------+
+|  Claude API (direct browser fetch)        |
+|  SP Analysis - ARR Insight - Zone Alert  |
+|  Ontology NL Query - Video Search        |
++------------------------------------------+
+|  Vercel Static Hosting (zero build)       |
++------------------------------------------+
 ```
 
-### State Management
-All application state is managed by **Zustand** with `persist` middleware — device states, agent statuses, and automations survive page refreshes via `localStorage`. State is domain-sliced into three independent stores:
-
-- `useDeviceStore` — 10 IoT devices across 4 zones
-- `useAgentStore` — 6 AI agents with trigger counters
-- `useAutomationStore` — configurable automation rules
-
-### AI Layer
-All Claude API calls are routed through `src/api/claude.ts` with dedicated context builders:
-
-- `buildSecurityContext()` — injects live device state, agent status, and threat score
-- `buildPEMSContext()` — injects TOU pricing, load totals, battery level, and PEMS mode
-- `parseAutomation()` — NL → structured JSON automation rule parser
-
-### Digital Twin (Three.js r128)
-The 3D scene is built entirely with orthographic camera geometry:
-
-- Semi-transparent glass walls (`MeshPhongMaterial`, opacity 0.22)
-- 7 light zones with `PointLight` + animated floor halos
-- 6 camera frustum cones with per-direction quaternion rotation
-- 4 door sensor amber pulse rings
-- 3 infrared motion heatmap zones
-- Drag-to-rotate via mouse/touch with arc-orbit math
-- Reactive energy layer — React state → `useRef` → Three.js animation loop (no remount)
-
-### PEMS — Predictive Energy Management
-Implements the full PEMS priority stack:
-
+**v1 architecture (main branch):**
 ```
-Priority order: Safety > Security > Energy Efficiency
-```
-
-- **NILM** (Non-Intrusive Load Monitoring) — electrical signature anomaly detection
-- **TOU pricing** — real-time off-peak / mid-peak / on-peak window detection
-- **Occupancy-intent logic** — Occupied → Arriving → Departing → Away state machine
-- **Grid-down mode** — Security Mesh is `protected: true` and cannot be shed
-- **UPS autonomy** — computed from battery % and current load draw
-
----
-
-## Tech Stack
-
-### Frontend
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 18.3.1 | UI framework |
-| TypeScript | 5.5.4 | Type safety |
-| Vite | 5.4.2 | Build tool and dev server |
-| Three.js | 0.128.0 | 3D Digital Twin rendering |
-| Zustand | 4.5.4 | State management with persistence |
-| React Router DOM | 6.26.2 | Client-side routing |
-| date-fns | 3.6.0 | Date formatting utilities |
-
-### AI & API
-| Technology | Purpose |
-|---|---|
-| Anthropic Claude API | AI chat, NL automation parsing, PEMS advisor |
-| claude-sonnet-4-20250514 | Default model for all agent interactions |
-| `import.meta.env` | Secure API key injection via Vite environment variables |
-
-### Infrastructure & Deployment
-| Technology | Purpose |
-|---|---|
-| Vercel | Primary deployment target (zero-config Vite detection) |
-| GitHub Actions | CI/CD pipeline — build + GitHub Pages deploy |
-| Docker + nginx | Self-hosted container option |
-| nginx 1.27 | Static file serving with SPA fallback, gzip, 1-year cache headers |
-
-### Canvas & Visualization
-| Technology | Purpose |
-|---|---|
-| HTML5 Canvas 2D | Camera feed simulation with AI bounding box overlays |
-| Three.js WebGL | 3D orthographic Digital Twin scene |
-| requestAnimationFrame | 10fps camera feeds, 60fps Three.js scene |
-
----
-
-## Project Structure
-
-```
-aegis/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── App.tsx                    # Full single-file application (all 9 tabs)
-│   ├── main.tsx                   # React DOM entry point
-│   ├── vite-env.d.ts              # Vite environment type declarations
-│   ├── theme.ts                   # Global dark design tokens (T object)
-│   ├── types/
-│   │   └── index.ts               # All TypeScript interfaces
-│   ├── api/
-│   │   ├── claude.ts              # Claude API wrapper + context builders
-│   │   └── nlParser.ts            # NL → automation JSON parser
-│   ├── store/
-│   │   ├── useDeviceStore.ts      # IoT device state (Zustand + persist)
-│   │   ├── useAgentStore.ts       # AI agent state (Zustand + persist)
-│   │   └── useAutomationStore.ts  # Automation rules (Zustand + persist)
-│   ├── hooks/
-│   │   ├── useThreatScore.ts      # Reactive threat score computation
-│   │   ├── useEscalation.ts       # Threshold-triggered escalation modal
-│   │   └── usePEMS.ts             # TOU pricing + grid-interactive logic
-│   └── utils/
-│       └── formatters.ts          # kW, rate, time, percentage formatters
-├── .github/
-│   └── workflows/
-│       ├── ci.yml                 # Build check on every push
-│       └── deploy.yml             # Auto-deploy to GitHub Pages + Docker Hub
-├── index.html                     # App shell with dark background
-├── package.json                   # Dependencies and build scripts
-├── vite.config.ts                 # Vite config with ESM-safe path aliases
-├── tsconfig.json                  # TypeScript config (strict: false for prototype)
-├── vercel.json                    # Vercel build + SPA rewrite rules
-├── Dockerfile                     # Multi-stage Node 20 → nginx build
-├── nginx.conf                     # Production nginx with gzip + cache headers
-├── docker-compose.yml             # Production + dev profiles
-├── .env.example                   # Environment variable template
-└── README.md
+React 18 + TypeScript + Vite 5
+Three.js Digital Twin (WebGL)
+Zustand state management (persisted)
+Claude API via server context builders
+Docker + nginx self-host option
+GitHub Actions CI/CD
 ```
 
 ---
 
-## Quick Start
+## What Each File Does
 
-### Prerequisites
-- Node.js 20+
-- An Anthropic API key — get one at [console.anthropic.com](https://console.anthropic.com)
-
-### Local Development
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/aegis.git
-cd aegis
-
-# 2. Install dependencies
-npm install
-
-# 3. Set up environment variables
-cp .env.example .env
-# Open .env and add your Anthropic API key:
-# VITE_ANTHROPIC_API_KEY=sk-ant-api03-...
-
-# 4. Start the dev server
-npm run dev
-# → http://localhost:3000
+```
+aegis-v2 branch/
++-- index.html        # Entire Aegis v2 application (all tabs, all logic)
++-- vercel.json       # Vercel static config (no build command)
++-- README.md         # This file
++-- LICENSE           # MIT
 ```
 
-### Available Scripts
-
-```bash
-npm run dev        # Start Vite dev server with hot reload
-npm run build      # Production build (output: dist/)
-npm run preview    # Preview production build locally
-npm run typecheck  # Run TypeScript type checking (does not block build)
-npm run test       # Run Vitest unit tests
-```
+That is the complete deployment. No `node_modules`, no `package.json`, no `src/`, no build artifacts needed.
 
 ---
 
-## Deployment
+## v1 vs v2 Technical Comparison
 
-### Vercel (Recommended — zero config)
+| Aspect | v1 (main) | v2 (aegis-v2) |
+|--------|-----------|----------------|
+| Build time | ~45s (Vite) | 0s (no build) |
+| Bundle size | ~280KB gzip | ~16KB gzip |
+| First load | ~200ms (pre-built) | ~2s (Babel parse) |
+| TypeScript | Full type safety | Runtime JSX only |
+| State | Zustand + localStorage | useState + localStorage |
+| 3D Twin | Three.js WebGL scene | Link to v1 demo |
+| Deployment | npm ci + vite build | Git push -> instant |
+| Debugging | Source maps + TS errors | Browser DevTools |
 
-```bash
-# Option A — Vercel CLI
-npm i -g vercel
-vercel
-# Set VITE_ANTHROPIC_API_KEY in Vercel dashboard → Settings → Environment Variables
-
-# Option B — GitHub integration
-# Push to main → Vercel auto-detects Vite → deploys automatically
-# vercel.json handles build command and SPA rewrites
-```
-
-### GitHub Pages (Free, auto on push to main)
-
-```bash
-git push origin main
-# GitHub Actions workflow builds and deploys automatically
-# Go to: GitHub repo → Settings → Pages → Source: GitHub Actions
-```
-
-Your live URL: `https://YOUR_USERNAME.github.io/aegis/`
-
-### Docker (Self-hosted)
-
-```bash
-# Production (serves on port 8080)
-docker-compose up aegis
-
-# Development with hot reload (serves on port 3000)
-docker-compose --profile dev up aegis-dev
-
-# Build and push to Docker Hub (set secrets in GitHub → Settings → Secrets)
-# DOCKERHUB_USERNAME + DOCKERHUB_TOKEN
-# Triggered automatically on push to main via deploy.yml
-```
+v2 optimizes for **demonstration velocity** -- getting a live URL with all four new modules working in minutes, not hours of build debugging.
 
 ---
 
-## Environment Variables
+## Business Context
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `VITE_ANTHROPIC_API_KEY` | **Yes** | — | Your Anthropic API key |
-| `VITE_CLAUDE_MODEL` | No | `claude-sonnet-4-20250514` | Claude model override |
-| `VITE_APP_NAME` | No | `Aegis` | App display name |
-| `VITE_DEFAULT_LOCATION` | No | `Great Falls, VA` | Default property location |
-| `VITE_ENABLE_DIGITAL_TWIN` | No | `true` | Toggle Digital Twin tab |
-| `VITE_ENABLE_PEMS` | No | `true` | Toggle EnergyHub tab |
-| `VITE_ENABLE_NL_AUTOMATIONS` | No | `true` | Toggle NL Automation Builder |
+Aegis v2 demonstrates the AI platform intelligence thesis for the Alarm.com platform:
 
-> ⚠️ **Never commit your `.env` file.** It is listed in `.gitignore`. Always set your API key through your hosting provider's environment variable UI (Vercel, Netlify, etc.)
+| Metric | Current | Target | AI Platform Impact |
+|--------|---------|--------|--------------------|
+| AI Resolution Rate | 87.4% | 95% | ~$30M additional ARR |
+| SP AI-Tier Partners | 94 | 500+ | $71M incremental ARR |
+| Outcome-based premium | -- | $4/event | ~$340M addressable |
+| Data flywheel moat | Fragmented | Unified ontology | 10x model accuracy |
 
----
-
-## AI Agents
-
-Aegis ships with 6 pre-configured autonomous agents:
-
-| Agent | Default Status | Trigger Count | Description |
-|---|---|---|---|
-| AI Deterrence | Active | Tracked | Delivers adaptive verbal warnings to detected intruders based on clothing and environment context |
-| Perimeter Guard | Active | Tracked | Monitors all outdoor sensors and cameras 24/7, auto-escalates on motion |
-| Smart Access Controller | Active | Tracked | Manages lock/unlock schedules, visitor access codes, and anomalous entry attempts |
-| Energy Optimizer (PEMS) | Active | Tracked | Grid-interactive load management, TOU optimization, demand response |
-| Remote Video Monitor | Active | Tracked | 24/7 AI video review — flags high-confidence human/vehicle events, suppresses false positives |
-| Wellness Aegis | Paused | Tracked | Tracks occupancy patterns and alerts trusted contacts on unusual inactivity |
-
-Each agent is fully toggle-able from the Agents tab. The PEMS priority rule is enforced in the Energy Optimizer's system prompt: **Safety > Security > Energy Efficiency**.
-
----
-
-## PEMS — Predictive Energy Management
-
-The EnergyHub implements a full grid-interactive energy management stack:
-
-### Operating Modes (Home & Enterprise profiles)
-
-| Mode | Description |
-|---|---|
-| Comfort | Full comfort, cost-optimized scheduling |
-| Off-Peak Optimization | Shift all deferrable loads to cheap windows |
-| Away / After-Hours | HVAC setback, vampire load cuts |
-| Deep Sleep | Minimum HVAC, security-only draw |
-| Grid-Down | Security Mesh only — all comfort loads shed |
-
-### Load Priority Classes
-
-| Class | Example Loads | Shed-able? |
-|---|---|---|
-| Critical | Security Mesh, cameras, sensors | Never (protected) |
-| Comfort | HVAC, smart lighting, appliances | Yes |
-| Deferrable | EV charging, vampire loads | Yes (first to shed) |
-
-### TOU Pricing Windows (Dominion Energy model)
-
-| Window | Hours | Rate |
-|---|---|---|
-| Off-Peak | 9 PM – 6 AM, 9 AM – 3 PM | $0.08/kWh |
-| Mid-Peak | 6–9 AM, 3–6 PM | $0.16/kWh |
-| On-Peak | 6–9 PM | $0.32/kWh |
-
----
-
-## Digital Twin — View Modes
-
-| Mode | What's visible |
-|---|---|
-| Security | Camera FoV cones, door sensor amber pulses, motion heatmap zones |
-| Energy | Light zone halos (color = efficiency), ceiling fixtures, optimization pulse rings |
-| Combined | Both layers at reduced opacity — full situational awareness |
-
-**Energy halo color coding:**
-- Green = efficient (< 35% of max draw)
-- Amber = moderate (35–65% of max draw)
-- Red = high draw (> 65% of max draw)
-- Pulsing amber ring = optimization savings available
-
----
-
-## GitHub Secrets Required for CI/CD
-
-Add in GitHub → Settings → Secrets and Variables → Actions:
-
-| Secret | Purpose |
-|---|---|
-| `DOCKERHUB_USERNAME` | Docker Hub image push |
-| `DOCKERHUB_TOKEN` | Docker Hub authentication |
-
-Add in GitHub → Settings → Variables → Actions:
-
-| Variable | Value |
-|---|---|
-| `VITE_CLAUDE_MODEL` | `claude-sonnet-4-20250514` |
+The domain ontology -- the shared knowledge graph across AID, EnergyHub, OpenEye, and CHeKT -- is the architectural investment that makes all four metrics compound.
 
 ---
 
 ## Roadmap
 
+### v2 (current)
+- [x] Service Provider Intelligence Dashboard
+- [x] AI Resolution Rate funnel and live log
+- [x] Commercial Property multi-zone AI
+- [x] Domain Ontology knowledge graph + NL query
+- [x] EV + Grid Intelligence with GM partnership
+
+### v3 horizon
 - [ ] WebSocket layer for real device state sync
-- [ ] React Router — each tab gets a shareable URL
-- [ ] Familiar face enrollment UI (camera recognition profiles)
-- [ ] Mobile push notifications via Web Push API
+- [ ] SP portal -- separate authenticated view for operators
+- [ ] Ontology training pipeline -- nightly re-training from event stream
+- [ ] ARR export -- CSV/PDF billing reports for SP invoicing
 - [ ] Multi-tenant property management with role-based access
-- [ ] Drone surveillance integration (patent-pending capability)
-- [ ] Natural language Digital Twin queries ("show me where motion was detected last night")
-- [ ] EnergyHub export — CSV/PDF billing reports
+- [ ] Mobile push notifications via Web Push API
+- [ ] Natural language Digital Twin queries
+- [ ] Familiar face enrollment -- camera recognition profiles
 
 ---
 
 ## Inspired By
 
-Built on top of the **Alarm.com** capability model (security cameras, access control, AI deterrence, remote video monitoring, energy management) and extended with:
+Built on top of the **Alarm.com** capability model:
 
-- Agentic AI architecture (Claude API)
-- Natural language automation building
-- Live 3D Digital Twin with sensor fusion
-- Grid-interactive PEMS with NILM anomaly detection
-- Occupancy-intent logic beyond binary motion sensing
+**v1 foundations:** AI Deterrence (AID), Remote Video Monitoring, Access Control, EnergyHub PEMS, NILM load monitoring, Grid-interactive demand response, Live 3D Digital Twin (Three.js), NL Automation Builder, 6 autonomous AI agents
+
+**v2 additions:** Service Provider Intelligence (partner channel), AI Resolution Rate (outcome-based pricing), Commercial Property AI (shift-aware, multi-zone), Domain Ontology (shared knowledge graph), EV + Grid Intelligence (GM EV partnership)
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for full text.
+MIT License -- see [LICENSE](LICENSE) for full text.
 
 Copyright (c) 2026 Aegis Platform Contributors
 
@@ -397,12 +302,11 @@ Copyright (c) 2026 Aegis Platform Contributors
 
 ## Contributing
 
-Pull requests welcome. For major changes, open an issue first to discuss what you'd like to change.
-
 ```bash
-git checkout -b feature/your-feature-name
-# make changes
-git commit -m "feat: your feature description"
-git push origin feature/your-feature-name
-# open a pull request
+git checkout -b feature/your-feature
+# edit index.html directly -- no build step needed
+# test by opening index.html in browser
+git commit -m "feat: description"
+git push origin feature/your-feature
+# open pull request -> aegis-v2 branch
 ```
