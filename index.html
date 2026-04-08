@@ -4,570 +4,447 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aegis v2 - Autonomous Property Intelligence</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html,body,#root{height:100%}
+html,body,#root{height:100%;overflow:hidden}
 body{font-family:'Inter',sans-serif;background:#080b12;color:#e8edf5;-webkit-font-smoothing:antialiased}
 :root{
---bg:#080b12;--bg2:#0d1119;--bg3:#111827;--bg4:#1a2235;
---border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
---text:#e8edf5;--text2:#8b9ab5;--text3:#556070;
---accent:#3b82f6;--accent2:#60a5fa;
---green:#10b981;--green2:#34d399;
---amber:#f59e0b;--amber2:#fcd34d;
---red:#ef4444;--red2:#f87171;
---purple:#8b5cf6;--purple2:#a78bfa;
---teal:#14b8a6;--teal2:#2dd4bf;
+  --bg:#080b12;--bg2:#0d1119;--bg3:#111827;--bg4:#1a2235;
+  --b:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.12);
+  --t:#e8edf5;--t2:#8b9ab5;--t3:#556070;
+  --ac:#3b82f6;--ac2:#60a5fa;
+  --gr:#10b981;--gr2:#34d399;
+  --am:#f59e0b;--am2:#fcd34d;
+  --re:#ef4444;--re2:#f87171;
+  --pu:#8b5cf6;--pu2:#a78bfa;
+  --te:#14b8a6;--te2:#2dd4bf;
 }
 ::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#1a2235;border-radius:2px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+button{font-family:'Inter',sans-serif;cursor:pointer}
+input{font-family:'Inter',sans-serif}
 </style>
 </head>
 <body>
-<div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#8b9ab5;font-family:Inter,sans-serif">Loading Aegis v2...</div></div>
+<div id="root"></div>
+<script>
+(function(){
+'use strict';
+const e=React.createElement;
+const {useState,useEffect,useRef}=React;
 
-<script type="text/babel" data-presets="react">
-const { useState, useEffect, useRef, useCallback } = React;
+// helpers
+const D=(s,...k)=>e('div',{style:s},...k);
+const S=(t,s)=>e('span',{style:s},t);
+const card=(x)=>({background:'var(--bg2)',border:'1px solid var(--b)',borderRadius:10,padding:16,...(x||{})});
+const mono=(sz,c)=>({fontFamily:"'DM Mono',monospace",fontSize:sz,color:c||'var(--t2)'});
+const syne=(sz,c,x)=>({fontFamily:"'Syne',sans-serif",fontSize:sz,fontWeight:700,color:c||'var(--t)',...(x||{})});
+const Lbl=(t)=>D({fontSize:11,fontWeight:600,letterSpacing:.8,textTransform:'uppercase',color:'var(--t3)',marginBottom:10},t);
+const Tag=(t,bg,c)=>S(t,{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:bg,color:c,border:'1px solid '+c+'40'});
+const Bar=({pct,color,h})=>D({height:h||6,background:'var(--bg4)',borderRadius:3,overflow:'hidden'},D({height:'100%',width:pct+'%',background:color,borderRadius:3,transition:'width .8s'}));
 
-// -- Constants --------------------------------------------------------------
-const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
+function SC({n,l,sub,accent}){
+  return D({...card(),position:'relative',overflow:'hidden'},
+    D({position:'absolute',top:0,right:0,width:'40%',height:2,background:accent}),
+    D(syne(22),n),D({fontSize:11,color:'var(--t2)',marginTop:2},l),D({fontSize:11,color:accent,marginTop:5},sub));
+}
+function SR({items}){
+  return D({display:'grid',gridTemplateColumns:'repeat('+items.length+',1fr)',gap:12,marginBottom:20},
+    ...items.map(([n,l,s,c],i)=>e(SC,{key:i,n,l,sub:s,accent:c})));
+}
+function PH({title,sub}){
+  return D({marginBottom:20},
+    D({...syne(22),display:'flex',alignItems:'center',gap:8},title,
+      S('v2',{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:'rgba(139,92,246,.15)',color:'var(--pu2)',border:'1px solid rgba(139,92,246,.3)',...mono(10)})),
+    D({fontSize:13,color:'var(--t2)',marginTop:4},sub));
+}
 
-const SP_DATA = [
-  { id:'sp1', name:'Guardian Security (MD)', location:'McLean, VA', tier:'enterprise-ai', subscribers:48210, arr:0.931, threat:2.1, savings:847000, rvm:1204, years:12, status:'optimal' },
-  { id:'sp2', name:'SecureNow Pro (TX)', location:'Houston, TX', tier:'pro-ai', subscribers:31450, arr:0.882, threat:4.7, savings:521000, rvm:876, years:8, status:'scaling' },
-  { id:'sp3', name:'NetAlarm Canada (ON)', location:'Toronto, ON', tier:'pro-ai', subscribers:22100, arr:0.851, threat:2.8, savings:392000, rvm:643, years:5, status:'optimal' },
-  { id:'sp4', name:'Apex Monitoring (CA)', location:'Los Angeles, CA', tier:'standard', subscribers:15320, arr:0.621, threat:5.3, savings:0, rvm:289, years:3, status:'upgrade-ready' },
-  { id:'sp5', name:'SmartShield (FL)', location:'Miami, FL', tier:'standard', subscribers:18940, arr:0.594, threat:7.1, savings:0, rvm:441, years:6, status:'upgrade-ready' },
-  { id:'sp6', name:'PacificAlarm (WA)', location:'Seattle, WA', tier:'pro-ai', subscribers:27600, arr:0.867, threat:3.2, savings:448000, rvm:721, years:7, status:'scaling' },
+// data
+const SPS=[
+  {id:'sp1',name:'Guardian Security (MD)',loc:'McLean, VA',tier:'enterprise-ai',subs:48210,arr:.931,sav:847000,years:12,status:'optimal'},
+  {id:'sp2',name:'SecureNow Pro (TX)',loc:'Houston, TX',tier:'pro-ai',subs:31450,arr:.882,sav:521000,years:8,status:'scaling'},
+  {id:'sp3',name:'NetAlarm Canada (ON)',loc:'Toronto, ON',tier:'pro-ai',subs:22100,arr:.851,sav:392000,years:5,status:'optimal'},
+  {id:'sp4',name:'Apex Monitoring (CA)',loc:'Los Angeles, CA',tier:'standard',subs:15320,arr:.621,sav:0,years:3,status:'upgrade-ready'},
+  {id:'sp5',name:'SmartShield (FL)',loc:'Miami, FL',tier:'standard',subs:18940,arr:.594,sav:0,years:6,status:'upgrade-ready'},
+  {id:'sp6',name:'PacificAlarm (WA)',loc:'Seattle, WA',tier:'pro-ai',subs:27600,arr:.867,sav:448000,years:7,status:'scaling'},
+];
+const ZNS=[
+  {id:'z1',name:'Main Lobby',hours:'07:00-22:00',level:1,occ:true,score:1.2,threat:'normal',cams:4,alerts:0},
+  {id:'z2',name:'Server Room',hours:'Restricted',level:4,occ:false,score:5.8,threat:'elevated',cams:2,alerts:1},
+  {id:'z3',name:'Loading Dock',hours:'06:00-18:00',level:2,occ:false,score:3.4,threat:'watch',cams:3,alerts:0},
+  {id:'z4',name:'Executive Floor',hours:'Level 4 only',level:4,occ:false,score:8.1,threat:'alert',cams:6,alerts:2},
+  {id:'z5',name:'Parking Structure',hours:'24/7',level:1,occ:true,score:2.1,threat:'normal',cams:8,alerts:0},
+  {id:'z6',name:'Data Center Annex',hours:'Air-gapped',level:5,occ:false,score:6.2,threat:'elevated',cams:4,alerts:1},
+];
+const ONT=[
+  {id:'residential',label:'Residential',domain:'property',desc:'847 sub-types: single-family, condo, vacation, rental. Distinct threat distributions and behavioral baselines per type.',count:'6.84M'},
+  {id:'commercial',label:'Commercial',domain:'property',desc:'Retail, office, light industrial. Shift-aware behavioral modeling, role-hierarchy access control, multi-zone threat scoring.',count:'1.2M'},
+  {id:'multifamily',label:'Multi-Family',domain:'property',desc:'Apartments, condos, student housing. PointCentral integration connects per-unit EnergyHub profiles with AID deterrence.',count:'980K'},
+  {id:'enterprise',label:'Enterprise',domain:'property',desc:'Office campuses, government, industrial. Shift-aware access, multi-zone scoring, Shooter Detection Systems integration.',count:'280K'},
+  {id:'aid',label:'AID Deterrence',domain:'security',desc:'Threat events and deterrence outcomes cross-referenced with property type and time-of-day to train threat pattern nodes.',count:'142K'},
+  {id:'rvm',label:'RVM + CHeKT',domain:'security',desc:'CHeKT (Feb 2025) extends RVM to central stations with third-party cameras. Cloud AI without hardware replacement.',count:'1,204'},
+  {id:'openeye',label:'OpenEye Video',domain:'security',desc:'License plate recognition, people counting, loitering detection. Richest input into threat pattern training.',count:'2M+'},
+  {id:'energyhub',label:'EnergyHub PEMS',domain:'energy',desc:'DER state, TOU pricing, grid demand signals, occupancy-intent states. Safety > Security > Energy enforced at ontology level.',count:'1.6M'},
+  {id:'ev',label:'EV + Grid-Edge',domain:'energy',desc:'Added in v2 following EnergyHub-GM partnership. EV charging schedules interact with TOU windows, demand response, SOC.',count:'48K'},
+  {id:'nilm',label:'NILM + Load AI',domain:'energy',desc:'Appliance signatures from aggregate power draw. Running appliance at 3AM is a meaningful security signal.',count:'3.2M'},
+  {id:'threats',label:'Threat Patterns',domain:'behavioral',desc:'142 distinct threat pattern types from 9.3M subscribers and 2B+ annual events. Property-type, time, and device-aware.',count:'142'},
+  {id:'ep',label:'Energy Profiles',domain:'behavioral',desc:'89 distinct profiles mapped to property types, climate zones, occupancy patterns. EV profiles added in v2.',count:'89'},
+  {id:'bb',label:'Behavioral Baselines',domain:'behavioral',desc:'Encodes "normal" for each property x time x device combination. 9.3M-subscriber corpus is the structural moat.',count:'847'},
+];
+const AGS=[
+  {name:'AI Deterrence Agent',status:'Active',c:'#10b981',triggers:847,arr:'91.2%',last:'2 min ago',desc:'Adaptive verbal warnings with context-aware tone. Integrates AID and OpenEye for full situational awareness.'},
+  {name:'Remote Video Monitor',status:'Active',c:'#10b981',triggers:1204,arr:'88.7%',last:'4 min ago',desc:'24/7 AI video review. Flags high-confidence events, suppresses false positives. CHeKT enables central station workflows.'},
+  {name:'Energy Optimizer (PEMS)',status:'Active',c:'#14b8a6',triggers:2000,arr:'96.1%',last:'1 min ago',desc:'Grid-interactive load management, NILM anomaly detection, TOU optimization, EV scheduling. Security Mesh always protected.'},
+  {name:'Smart Access Controller',status:'Active',c:'#3b82f6',triggers:4102,arr:'79.8%',last:'11 min ago',desc:'Shift-aware behavioral baseline for commercial access. Cross-zone anomaly detection.'},
+  {name:'Perimeter Guard',status:'Active',c:'#10b981',triggers:2341,arr:'84.3%',last:'8 min ago',desc:'Monitors all outdoor sensors 24/7. Auto-escalates on motion with confidence scoring.'},
+  {name:'Wellness Aegis',status:'Paused',c:'#556070',triggers:0,arr:'N/A',last:'--',desc:'Tracks occupancy patterns, alerts trusted contacts on unusual inactivity. ISO 42001 privacy review in progress.'},
+];
+const FD=[
+  {c:'#10b981',t:'AI Deterrence resolved perimeter motion - Great Falls, VA (confidence: 94%)'},
+  {c:'#f59e0b',t:'EnergyHub: demand response from Dominion Energy - load shed initiated'},
+  {c:'#3b82f6',t:'SP Guardian Security: 48,210 subscribers synced - ARR 93.1%'},
+  {c:'#10b981',t:'RVM auto-resolved: delivery vehicle at 94 SPs - no dispatch required'},
+  {c:'#ef4444',t:'Commercial alert: unknown badge attempt - Executive Floor, AI Deterrence active'},
+  {c:'#8b5cf6',t:'Ontology: 847 property-type nodes refreshed from nightly training run'},
+  {c:'#14b8a6',t:'EV charging optimized: Blazer EV -> target 90% by 06:00 at $0.08/kWh'},
+  {c:'#10b981',t:'False alarm suppressed: cat motion, Perimeter Zone 3 - AI classification 97%'},
+];
+const EVT=[
+  {type:'Motion - Perimeter',disp:'auto-resolved',c:'#10b981'},
+  {type:'Video Alert - Front Door',disp:'auto-resolved',c:'#10b981'},
+  {type:'Access Anomaly - Server',disp:'escalated',c:'#f59e0b'},
+  {type:'NILM Spike - HVAC',disp:'auto-resolved',c:'#10b981'},
+  {type:'Unknown Badge - Exec Floor',disp:'dispatched',c:'#ef4444'},
+];
+const ARR_A={'AI Deterrence':.912,'Remote Video Monitor':.887,'Perimeter Guard':.843,'Energy Optimizer':.961,'Smart Access':.798};
+const DC={property:'#10b981',security:'#ef4444',energy:'#f59e0b',behavioral:'#8b5cf6'};
+const TC={normal:'#10b981',watch:'#3b82f6',elevated:'#f59e0b',alert:'#ef4444'};
+const TL={'enterprise-ai':'Enterprise AI','pro-ai':'Pro AI','standard':'Standard'};
+const SC2={optimal:'#10b981',scaling:'#3b82f6','upgrade-ready':'#f59e0b'};
+const NAV=[
+  {id:'dashboard',label:'Dashboard',icon:'[D]'},
+  {id:'agents',label:'AI Agents',icon:'[A]',badge:'6 Active'},
+  {id:'cameras',label:'Cameras',icon:'[C]'},
+  {id:'energyhub',label:'EnergyHub + EV',icon:'[E]',badge:'EV'},
+  {id:'sp',label:'SP Intelligence',icon:'[S]',badge:'NEW',v2:true},
+  {id:'arr',label:'AI Resolution',icon:'[R]',badge:'NEW',v2:true},
+  {id:'commercial',label:'Commercial AI',icon:'[M]',badge:'NEW',v2:true},
+  {id:'ontology',label:'Domain Ontology',icon:'[O]',badge:'NEW',v2:true},
+  {id:'analytics',label:'Analytics',icon:'[Z]'},
 ];
 
-const ZONES = [
-  { id:'z1', name:'Main Lobby', hours:'07:00-22:00', level:1, occupied:true, score:1.2, threat:'normal', cameras:4, alerts:0 },
-  { id:'z2', name:'Server Room', hours:'Restricted', level:4, occupied:false, score:5.8, threat:'elevated', cameras:2, alerts:1 },
-  { id:'z3', name:'Loading Dock', hours:'06:00-18:00', level:2, occupied:false, score:3.4, threat:'watch', cameras:3, alerts:0 },
-  { id:'z4', name:'Executive Floor', hours:'Level 4 only', level:4, occupied:false, score:8.1, threat:'alert', cameras:6, alerts:2 },
-  { id:'z5', name:'Parking Structure', hours:'24/7', level:1, occupied:true, score:2.1, threat:'normal', cameras:8, alerts:0 },
-  { id:'z6', name:'Data Center Annex', hours:'Air-gapped', level:5, occupied:false, score:6.2, threat:'elevated', cameras:4, alerts:1 },
-];
-
-const ONT_NODES = [
-  { id:'residential', label:'Residential', domain:'property', desc:'847 sub-types including single-family, condo, vacation, rental. Distinct threat distributions, energy profiles, behavioral baselines per type.', count:'6.84M' },
-  { id:'commercial', label:'Commercial', domain:'property', desc:'Retail, office, light industrial. Requires shift-aware behavioral modeling, role-hierarchy access control, multi-zone threat scoring.', count:'1.2M' },
-  { id:'multifamily', label:'Multi-Family', domain:'property', desc:'Apartments, condos, student housing. PointCentral integration connects per-unit EnergyHub profiles with common-area AID deterrence.', count:'980K' },
-  { id:'enterprise', label:'Enterprise', domain:'property', desc:'Office campuses, government, industrial. Shift-aware access, multi-zone scoring, Shooter Detection Systems integration.', count:'280K' },
-  { id:'aid', label:'AID Deterrence', domain:'security', desc:'Contributes threat events and deterrence outcomes. Cross-referenced with property type and time-of-day to train threat pattern nodes.', count:'142K' },
-  { id:'rvm', label:'RVM + CHeKT', domain:'security', desc:'CHeKT (acquired Feb 2025) extends RVM to central stations with third-party cameras. Cloud AI classification without hardware replacement.', count:'1,204' },
-  { id:'openeye', label:'OpenEye Video', domain:'security', desc:'Enterprise video analytics: license plate recognition, people counting, loitering detection. Richest input into threat pattern training.', count:'2M+' },
-  { id:'energyhub', label:'EnergyHub PEMS', domain:'energy', desc:'DER state, TOU pricing, grid demand signals, occupancy-intent states. Safety > Security > Energy priority enforced at ontology level.', count:'1.6M' },
-  { id:'ev', label:'EV + Grid-Edge', domain:'energy', desc:'Added in v2 following EnergyHub-GM partnership. EV charging schedules interact with TOU windows, demand response, battery SOC.', count:'48K' },
-  { id:'nilm', label:'NILM + Load AI', domain:'energy', desc:'Appliance signatures from aggregate power draw. Running appliance at 3AM is a meaningful security signal - feeds both PEMS and threat detection.', count:'3.2M' },
-  { id:'threats', label:'Threat Patterns', domain:'behavioral', desc:'142 distinct threat pattern types from 9.3M subscribers and 2B+ annual events. Property-type-aware, time-aware, device-aware.', count:'142' },
-  { id:'energy-prof', label:'Energy Profiles', domain:'behavioral', desc:'89 distinct profiles mapped to property types, climate zones, occupancy patterns. EV profiles added in v2 after GM partnership.', count:'89' },
-  { id:'baselines', label:'Behavioral Baselines', domain:'behavioral', desc:'The most valuable node class. Encodes "normal" for each property x time x device combination. 9.3M-subscriber corpus is the structural moat.', count:'847' },
-];
-
-const FEED_ITEMS = [
-  { c:'#10b981', t:'AI Deterrence resolved perimeter motion - Great Falls, VA (confidence: 94%)' },
-  { c:'#f59e0b', t:'EnergyHub: demand response from Dominion Energy - load shed initiated' },
-  { c:'#3b82f6', t:'SP Guardian Security: 48,210 subscribers synced - ARR 93.1%' },
-  { c:'#10b981', t:'RVM auto-resolved: delivery vehicle at 94 SPs - no dispatch required' },
-  { c:'#ef4444', t:'Commercial alert: unknown badge attempt - Executive Floor, AI Deterrence active' },
-  { c:'#8b5cf6', t:'Ontology: 847 property-type nodes refreshed from nightly training run' },
-  { c:'#14b8a6', t:'EV charging optimized: Blazer EV -> target 90% by 06:00 at $0.08/kWh' },
-  { c:'#10b981', t:'False alarm suppressed: cat motion, Perimeter Zone 3 - AI classification 97%' },
-];
-
-const AGENTS = [
-  { name:'AI Deterrence Agent', status:'Active', c:'#10b981', triggers:847, arr:'91.2%', last:'2 min ago', desc:'Adaptive verbal warnings with context-aware tone. Integrates AID and OpenEye for full situational awareness before engagement.' },
-  { name:'Remote Video Monitor', status:'Active', c:'#10b981', triggers:1204, arr:'88.7%', last:'4 min ago', desc:'24/7 AI video review. Flags high-confidence events, suppresses false positives. CHeKT enables central station workflows.' },
-  { name:'Energy Optimizer (PEMS)', status:'Active', c:'#14b8a6', triggers:2000, arr:'96.1%', last:'1 min ago', desc:'Grid-interactive load management, NILM anomaly detection, TOU optimization, EV scheduling. Security Mesh always protected.' },
-  { name:'Smart Access Controller', status:'Active', c:'#3b82f6', triggers:4102, arr:'79.8%', last:'11 min ago', desc:'Shift-aware behavioral baseline for commercial access. Cross-zone anomaly detection. Unusual entry pattern alerts.' },
-  { name:'Perimeter Guard', status:'Active', c:'#10b981', triggers:2341, arr:'84.3%', last:'8 min ago', desc:'Monitors all outdoor sensors 24/7. Auto-escalates on motion with confidence scoring.' },
-  { name:'Wellness Aegis', status:'Paused', c:'#556070', triggers:0, arr:'N/A', last:'--', desc:'Tracks occupancy patterns and alerts trusted contacts on unusual inactivity. ISO 42001 privacy review in progress.' },
-];
-
-const ARR_BY_AGENT = { 'AI Deterrence':0.912, 'Remote Video Monitor':0.887, 'Perimeter Guard':0.843, 'Energy Optimizer':0.961, 'Smart Access Controller':0.798 };
-
-const NAV = [
-  { id:'dashboard', label:'Dashboard', icon:'[#]', section:'Core' },
-  { id:'agents', label:'AI Agents', icon:'[A]', badge:'6 Active', section:'Core' },
-  { id:'cameras', label:'Cameras', icon:'[C]', section:'Core' },
-  { id:'energyhub', label:'EnergyHub + EV', icon:'[E]', badge:'EV NEW', section:'Core' },
-  { id:'sp', label:'SP Intelligence', icon:'[S]', badge:'NEW', v2:true, section:'v2' },
-  { id:'arr', label:'AI Resolution', icon:'[R]', badge:'NEW', v2:true, section:'v2' },
-  { id:'commercial', label:'Commercial AI', icon:'[M]', badge:'NEW', v2:true, section:'v2' },
-  { id:'ontology', label:'Domain Ontology', icon:'[O]', badge:'NEW', v2:true, section:'v2' },
-  { id:'analytics', label:'Analytics', icon:'[Z]', section:'Core' },
-];
-
-const DOMAIN_COLORS = { property:'#10b981', security:'#ef4444', energy:'#f59e0b', behavioral:'#8b5cf6' };
-const THREAT_COLORS = { normal:'#10b981', watch:'#3b82f6', elevated:'#f59e0b', alert:'#ef4444' };
-const TIER_LABELS = { 'enterprise-ai':'Enterprise AI', 'pro-ai':'Pro AI', 'standard':'Standard' };
-const STATUS_COLORS = { optimal:'#10b981', scaling:'#3b82f6', 'upgrade-ready':'#f59e0b' };
-
-// -- Claude API -------------------------------------------------------------
-async function askClaude(system, user, apiKey) {
-  if (!apiKey) return 'Add your Anthropic API key in Settings to enable AI responses.';
-  try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+// Claude
+async function ask(sys,usr,key){
+  if(!key) return 'Click "API Key" in the header to enable live AI responses.';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{ 'Content-Type':'application/json', 'x-api-key':apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body:JSON.stringify({ model:CLAUDE_MODEL, max_tokens:400, system, messages:[{role:'user',content:user}] })
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sys,messages:[{role:'user',content:usr}]})
     });
-    const d = await r.json();
-    return d.content?.[0]?.text || 'No response.';
-  } catch(e) { return 'API call failed - check your key and CORS settings.'; }
+    const d=await r.json();
+    return d.content?.[0]?.text||'No response.';
+  }catch(err){return 'API error: '+err.message;}
 }
 
-// -- Helpers ----------------------------------------------------------------
-const S = (style) => style;
-const card = (extra={}) => ({background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:10,padding:16,...extra});
-const hbar = (pct, color, h=6) => React.createElement('div',{style:{height:h,background:'var(--bg4)',borderRadius:3,overflow:'hidden'}},
-  React.createElement('div',{style:{height:'100%',width:`${pct}%`,background:color,borderRadius:3}}));
-const tag = (text, bg, color) => React.createElement('span',{style:{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:bg,color,border:`1px solid ${color}40`}},text);
-const syne = (text, size, color='var(--text)', extra={}) => React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontSize:size,fontWeight:700,color,letterSpacing:-0.5,...extra}},text);
-const mono = (text, size=12, color='var(--text2)') => React.createElement('div',{style:{fontFamily:"'DM Mono',monospace",fontSize:size,color}},text);
-const label = (text) => React.createElement('div',{style:{fontSize:11,fontWeight:600,letterSpacing:0.8,textTransform:'uppercase',color:'var(--text3)',marginBottom:10}},text);
-const statCard = (n, l, sub, accent) => React.createElement('div',{style:{...card(),position:'relative',overflow:'hidden'}},
-  React.createElement('div',{style:{position:'absolute',top:0,right:0,width:'40%',height:2,background:accent}}),
-  syne(n, 22), React.createElement('div',{style:{fontSize:11,color:'var(--text2)',marginTop:2}},l),
-  React.createElement('div',{style:{fontSize:11,color:accent,marginTop:5}},sub));
-const statsRow = (items) => React.createElement('div',{style:{display:'grid',gridTemplateColumns:`repeat(${items.length},1fr)`,gap:12,marginBottom:20}},
-  ...items.map(([n,l,s,c]) => statCard(n,l,s,c)));
-const pageHead = (title, sub) => React.createElement('div',{style:{marginBottom:20}},
-  React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontSize:22,fontWeight:700,color:'var(--text)',display:'flex',alignItems:'center',gap:8}},
-    title,
-    React.createElement('span',{style:{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:'rgba(139,92,246,0.15)',color:'var(--purple2)',border:'1px solid rgba(139,92,246,0.3)',fontFamily:"'DM Mono',monospace"}},'v2')),
-  React.createElement('div',{style:{fontSize:13,color:'var(--text2)',marginTop:4}},sub));
-
-// -- Live Feed Hook ---------------------------------------------------------
-function useLiveFeed() {
-  const [feed, setFeed] = useState([]);
-  const idx = useRef(0);
-  useEffect(() => {
-    const tick = () => { setFeed(f => [FEED_ITEMS[idx.current % FEED_ITEMS.length], ...f].slice(0,7)); idx.current++; };
-    tick(); const id = setInterval(tick, 3200); return () => clearInterval(id);
-  }, []);
-  return feed;
+// Canvas camera
+function Cam({idx,label,status,col}){
+  const ref=useRef(null);
+  useEffect(()=>{
+    const cv=ref.current; if(!cv) return;
+    const ctx=cv.getContext('2d');
+    const bgs=['#0d2035','#1a1500','#1a0d0d'];
+    const tags=['Person 94%','Vehicle 87%','Motion 91%'];
+    const draw=()=>{
+      ctx.fillStyle=bgs[idx];ctx.fillRect(0,0,280,158);
+      ctx.strokeStyle=col;ctx.lineWidth=1.5;
+      var x=40+Math.random()*100,y=30+Math.random()*60,w=60+Math.random()*40,h=50+Math.random()*30;
+      ctx.strokeRect(x,y,w,h);ctx.fillStyle=col;ctx.font='9px monospace';ctx.fillText(tags[idx],x,y-4);
+      ctx.strokeStyle='rgba(255,255,255,0.04)';
+      for(var k=0;k<8;k++) ctx.strokeRect(Math.random()*240,Math.random()*120,20+Math.random()*30,15+Math.random()*25);
+    };
+    draw();var id=setInterval(draw,900+idx*200);return function(){clearInterval(id);};
+  },[idx]);
+  return D({background:'var(--bg3)',border:'1px solid '+col+'40',borderRadius:8,overflow:'hidden'},
+    e('canvas',{ref,width:280,height:158,style:{width:'100%',display:'block'}}),
+    D({padding:'8px 10px',display:'flex',justifyContent:'space-between',alignItems:'center'},
+      S(label,{fontSize:11,color:'var(--t2)'}),
+      S(status,{fontSize:10,fontWeight:600,padding:'2px 7px',borderRadius:4,background:col+'20',color:col})));
 }
 
-// -- SP Intelligence --------------------------------------------------------
-function SpIntelligence({ apiKey }) {
-  const [insight, setInsight] = useState(''); const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true);
-    const summary = SP_DATA.map(s=>`${s.name}: ${(s.arr*100).toFixed(1)}% ARR, ${s.tier}`).join('; ');
-    askClaude('You are the Aegis SP Intelligence analyzer. Analyze partner AI adoption. Be specific and brief (2 sentences max).', `SP data: ${summary}. Give the single highest-priority action to grow AI-tier adoption.`, apiKey).then(r=>{setInsight(r);setLoading(false);});
-  }, []);
-  const aiTier = SP_DATA.filter(s=>s.tier!=='standard');
-  const upgrade = SP_DATA.filter(s=>s.status==='upgrade-ready');
-  return React.createElement('div', null,
-    statsRow([
-      [SP_DATA.length.toLocaleString(), 'Active Service Providers', '^ 847 this year', '#3b82f6'],
-      [aiTier.length, 'AI-Tier Partners', 'New tier - Q1 2025', '#10b981'],
-      [upgrade.length, 'Upgrade-Ready SPs', '~$71M incremental ARR', '#f59e0b'],
-      [`${((aiTier.reduce((a,b)=>a+b.arr,0)/aiTier.length)*100).toFixed(1)}%`, 'Avg ARR (AI-tier)', 'vs 61% standard-tier', '#8b5cf6'],
-    ]),
-    (insight||loading) && React.createElement('div',{style:{background:'rgba(59,130,246,0.06)',border:'1px solid rgba(59,130,246,0.2)',borderRadius:10,padding:'12px 16px',marginBottom:16,fontSize:13,color:'var(--text2)',lineHeight:1.6}},
-      React.createElement('div',{style:{fontSize:10,fontWeight:600,letterSpacing:1,textTransform:'uppercase',color:'var(--accent2)',marginBottom:4}},'AI Analysis'),
-      loading ? 'Analyzing partner network...' : insight),
-    React.createElement('div',{style:card({marginBottom:14})},
-      React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
-        label('Partner AI Performance'), tag('API-Accessible','rgba(59,130,246,0.15)','var(--accent2)')),
-      React.createElement('div',{style:{overflowX:'auto'}},
-        React.createElement('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
-          React.createElement('thead',null,
-            React.createElement('tr',null,
-              ...['Service Provider','Tier','Subscribers','AI Res. Rate','Monthly Savings','Status'].map(h=>
-                React.createElement('th',{style:{textAlign:'left',padding:'6px 10px',fontSize:10,fontWeight:600,letterSpacing:0.8,textTransform:'uppercase',color:'var(--text3)',borderBottom:'1px solid var(--border)'}},h)))),
-          React.createElement('tbody',null,
-            ...SP_DATA.map(sp =>
-              React.createElement('tr',{key:sp.id},
-                React.createElement('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,0.04)'}},
-                  React.createElement('div',{style:{fontWeight:500,color:'var(--text)',fontSize:13}},sp.name),
-                  React.createElement('div',{style:{fontSize:10,color:'var(--text3)'}},`${sp.location} - ${sp.years}yr partner`)),
-                React.createElement('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,0.04)'}},
-                  React.createElement('span',{style:{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:sp.tier==='enterprise-ai'?'rgba(139,92,246,0.15)':sp.tier==='pro-ai'?'rgba(59,130,246,0.15)':'rgba(255,255,255,0.06)',color:sp.tier==='enterprise-ai'?'var(--purple2)':sp.tier==='pro-ai'?'var(--accent2)':'var(--text3)'}},TIER_LABELS[sp.tier])),
-                React.createElement('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,0.04)',color:'var(--text)',fontWeight:500}},sp.subscribers.toLocaleString()),
-                React.createElement('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,0.04)'}},
-                  React.createElement('div',{style:{display:'flex',alignItems:'center',gap:6}},
-                    React.createElement('div',{style:{height:4,background:'var(--bg4)',borderRadius:2,width:60,overflow:'hidden'}},
-                      React.createElement('div',{style:{height:'100%',width:`${sp.arr*100}%`,background:sp.arr>0.85?'var(--green)':sp.arr>0.7?'var(--accent)':'var(--amber)',borderRadius:2}})),
-                    React.createElement('span',{style:{fontFamily:"'DM Mono',monospace",fontSize:13,fontWeight:500,color:sp.arr>0.85?'var(--green)':sp.arr>0.7?'var(--accent2)':'var(--amber2)'}},`${(sp.arr*100).toFixed(1)}%`))),
-                React.createElement('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,0.04)',color:sp.savings>0?'var(--green2)':'var(--text3)',fontWeight:600}},sp.savings>0?`$${(sp.savings/1000).toFixed(0)}K`:'N/A'),
-                React.createElement('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,0.04)'}},
-                  React.createElement('span',{style:{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:`${STATUS_COLORS[sp.status]}20`,color:STATUS_COLORS[sp.status]}},{optimal:'Optimal',scaling:'Scaling','upgrade-ready':'Upgrade Ready'}[sp.status]))))))));
+// SP panel
+function SP({apiKey}){
+  var [ins,setIns]=useState('');var [ld,setLd]=useState(false);
+  useEffect(function(){
+    setLd(true);
+    var sum=SPS.map(function(s){return s.name+': '+(s.arr*100).toFixed(1)+'% ARR, '+s.tier;}).join('; ');
+    ask('You are the Aegis SP Intelligence analyzer. 2 sentences max, focus on highest-priority action to grow AI-tier adoption.','SP data: '+sum,apiKey).then(function(r){setIns(r);setLd(false);});
+  },[]);
+  var aiT=SPS.filter(function(s){return s.tier!=='standard';});
+  var upg=SPS.filter(function(s){return s.status==='upgrade-ready';});
+  var avg=(aiT.reduce(function(a,b){return a+b.arr;},0)/aiT.length*100).toFixed(1);
+  function ac(arr){return arr>.85?'var(--gr)':arr>.7?'var(--ac2)':'var(--am2)';}
+  return D(null,
+    e(SR,{items:[[SPS.length.toLocaleString(),'Active Service Providers','^ 847 this year','#3b82f6'],[aiT.length,'AI-Tier Partners','New tier - Q1 2025','#10b981'],[upg.length,'Upgrade-Ready SPs','~$71M incremental ARR','#f59e0b'],[avg+'%','Avg ARR (AI-tier)','vs 61% standard','#8b5cf6']]}),
+    (ins||ld)&&D({background:'rgba(59,130,246,.06)',border:'1px solid rgba(59,130,246,.2)',borderRadius:10,padding:'12px 16px',marginBottom:16,fontSize:13,color:'var(--t2)',lineHeight:1.6},
+      D({fontSize:10,fontWeight:600,letterSpacing:1,textTransform:'uppercase',color:'var(--ac2)',marginBottom:4},'AI Analysis'),ld?'Analyzing...':ins),
+    D({...card({marginBottom:14})},
+      D({display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14},Lbl('Partner AI Performance'),Tag('API-Accessible','rgba(59,130,246,.15)','var(--ac2)')),
+      D({overflowX:'auto'},
+        e('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:12}},
+          e('thead',null,e('tr',null,...['Service Provider','Tier','Subscribers','AI Res. Rate','Savings/mo','Status'].map(function(h){return e('th',{style:{textAlign:'left',padding:'6px 10px',fontSize:10,fontWeight:600,letterSpacing:.8,textTransform:'uppercase',color:'var(--t3)',borderBottom:'1px solid var(--b)'}},h);}))),
+          e('tbody',null,...SPS.map(function(sp){
+            return e('tr',{key:sp.id},
+              e('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,.04)'}},D({fontWeight:500,color:'var(--t)',fontSize:13},sp.name),D({fontSize:10,color:'var(--t3)'},sp.loc+' - '+sp.years+'yr partner')),
+              e('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,.04)'}},S(TL[sp.tier],{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:sp.tier==='enterprise-ai'?'rgba(139,92,246,.15)':sp.tier==='pro-ai'?'rgba(59,130,246,.15)':'rgba(255,255,255,.06)',color:sp.tier==='enterprise-ai'?'var(--pu2)':sp.tier==='pro-ai'?'var(--ac2)':'var(--t3)'})),
+              e('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,.04)',color:'var(--t)',fontWeight:500}},sp.subs.toLocaleString()),
+              e('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,.04)'}},D({display:'flex',alignItems:'center',gap:6},D({height:4,background:'var(--bg4)',borderRadius:2,width:60,overflow:'hidden'},D({height:'100%',width:(sp.arr*100)+'%',background:ac(sp.arr),borderRadius:2})),S((sp.arr*100).toFixed(1)+'%',{...mono(13),color:ac(sp.arr),fontWeight:500}))),
+              e('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,.04)',color:sp.sav>0?'var(--gr2)':'var(--t3)',fontWeight:600}},sp.sav>0?'$'+(sp.sav/1000).toFixed(0)+'K':'N/A'),
+              e('td',{style:{padding:'9px 10px',borderBottom:'1px solid rgba(255,255,255,.04)'}},S({optimal:'Optimal',scaling:'Scaling','upgrade-ready':'Upgrade Ready'}[sp.status],{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:SC2[sp.status]+'20',color:SC2[sp.status]})));
+          }))))));
 }
 
-// -- ARR Metrics ------------------------------------------------------------
-function ArrPanel({ apiKey }) {
-  const [events, setEvents] = useState([]); const [insight, setInsight] = useState(''); const [loading, setLoading] = useState(false);
-  const evIdx = useRef(0);
-  const EVTS = [
-    { type:'Motion - Perimeter', disp:'auto-resolved', c:'#10b981' },
-    { type:'Video Alert - Front Door', disp:'auto-resolved', c:'#10b981' },
-    { type:'Access Anomaly - Server', disp:'escalated', c:'#f59e0b' },
-    { type:'NILM Spike - HVAC', disp:'auto-resolved', c:'#10b981' },
-    { type:'Unknown Badge - Exec Floor', disp:'dispatched', c:'#ef4444' },
+// ARR panel
+function AR({apiKey}){
+  var [evts,setEvts]=useState([]);var [ins,setIns]=useState('');var [ld,setLd]=useState(false);
+  var idx=useRef(0);
+  useEffect(function(){
+    setLd(true);
+    ask('You are the Aegis ARR business analyst. 2 sentences, focus on dollar impact.','Platform ARR: 87.4% vs 61% baseline, 162K monthly events, $4/resolved event. Quantify business impact.',apiKey).then(function(r){setIns(r);setLd(false);});
+    var id=setInterval(function(){
+      var ev=EVT[idx.current%EVT.length];idx.current++;
+      var now=new Date();
+      var ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+      setEvts(function(es){return [{...ev,ts,id:Date.now()},...es].slice(0,8);});
+    },2500);
+    return function(){clearInterval(id);};
+  },[]);
+  function dc(d){return d==='auto-resolved'?'var(--gr)':d==='escalated'?'var(--am2)':'var(--re2)';}
+  var funnel=[
+    ['162,300 events detected',1,'rgba(59,130,246,.25)','var(--ac2)'],
+    ['141,801 auto-resolved (87.4%)',.874,'rgba(16,185,129,.2)','var(--gr2)'],
+    ['18,200 escalated to human',.112,'rgba(245,158,11,.2)','var(--am2)'],
+    ['2,100 dispatched',.013,'rgba(239,68,68,.2)','var(--re2)'],
   ];
-  useEffect(() => {
-    setLoading(true);
-    askClaude('You are the Aegis ARR business analyst. Quantify business impact of 87.4% ARR vs 61% baseline across 9.3M subscribers. Be specific, 2 sentences.','Platform ARR: 87.4%, baseline: 61%, 162K monthly events, $4/resolved event value. What is the revenue impact?', apiKey).then(r=>{setInsight(r);setLoading(false);});
-    const id = setInterval(() => {
-      const ev = EVTS[evIdx.current % EVTS.length]; evIdx.current++;
-      const now = new Date();
-      setEvents(e => [{...ev, ts:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`, id:Date.now()}, ...e].slice(0,8));
-    }, 2500);
-    return () => clearInterval(id);
-  }, []);
-  return React.createElement('div',null,
-    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:14}},
-      React.createElement('div',{style:card()},
-        label('Platform-Wide AI Resolution Rate'),
-        syne('87.4%',52,'var(--green2)',{letterSpacing:-2,lineHeight:1}),
-        mono('AI RESOLUTION RATE -- 30-DAY ROLLING',11,'var(--text3)'),
-        React.createElement('div',{style:{height:1,background:'var(--border)',margin:'14px 0'}}),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}},
-          ...[['142K','Auto-resolved','var(--green2)'],['18.2K','Human review','var(--amber2)'],['2,100','Dispatched','var(--red2)'],['61%','Human baseline','var(--text3)']].map(([n,l,c])=>
-            React.createElement('div',{key:l}, syne(n,20,c), React.createElement('div',{style:{fontSize:10,color:'var(--text3)'}},l)))),
-        (insight||loading) && React.createElement('div',{style:{marginTop:14,padding:'10px 12px',background:'rgba(59,130,246,0.06)',borderRadius:8,fontSize:12,color:'var(--text2)',lineHeight:1.6}},
-          React.createElement('div',{style:{fontSize:10,fontWeight:600,color:'var(--accent2)',letterSpacing:1,textTransform:'uppercase',marginBottom:4}},'AI Business Insight'),
-          loading?'Calculating...':insight)),
-      React.createElement('div',{style:card()},
-        label('Resolution Funnel - 30 Days'),
-        ...[
-          ['162,300 events detected', 1.0, 'rgba(59,130,246,0.25)', 'var(--accent2)'],
-          ['141,801 auto-resolved (87.4%)', 0.87, 'rgba(16,185,129,0.2)', 'var(--green2)'],
-          ['18,200 escalated to human', 0.112, 'rgba(245,158,11,0.2)', 'var(--amber2)'],
-          ['2,100 dispatched', 0.013, 'rgba(239,68,68,0.2)', 'var(--red2)'],
-        ].map(([txt, pct, bg, col], i) => React.createElement('div',{key:i, style:{marginBottom:8}},
-          React.createElement('div',{style:{height:32,background:bg,borderRadius:6,width:`${Math.max(pct*100,8)}%`,minWidth:80,display:'flex',alignItems:'center',paddingLeft:10,fontSize:11,fontWeight:600,color:col}},pct>0.15?txt:''),
-          pct<=0.15 && React.createElement('div',{style:{fontSize:11,color:col,paddingLeft:4}},txt),
-          i<3 && React.createElement('div',{style:{fontSize:10,color:'var(--text3)',paddingLeft:4,marginBottom:4}},'v AI processing'))))),
-    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}},
-      React.createElement('div',{style:card()},
-        label('Live Resolution Log'),
-        events.length===0 && React.createElement('div',{style:{fontSize:12,color:'var(--text3)',fontStyle:'italic'}},'Waiting for events...'),
-        ...events.map(ev=>React.createElement('div',{key:ev.id,style:{display:'flex',alignItems:'center',gap:8,padding:'7px 0',borderBottom:'1px solid rgba(255,255,255,0.04)'}},
-          React.createElement('div',{style:{width:7,height:7,borderRadius:'50%',background:ev.c,flexShrink:0}}),
-          React.createElement('div',{style:{fontFamily:"'DM Mono',monospace",fontSize:10,color:'var(--text3)',width:54,flexShrink:0}},ev.ts),
-          React.createElement('div',{style:{fontSize:12,color:'var(--text2)',flex:1}},ev.type),
-          React.createElement('div',{style:{fontSize:11,fontWeight:600,color:ev.c,whiteSpace:'nowrap',textTransform:'capitalize'}},ev.disp.replace('-',' '))))),
-      React.createElement('div',{style:card()},
-        label('ARR by Agent'),
-        ...Object.entries(ARR_BY_AGENT).map(([agent,rate])=>React.createElement('div',{key:agent,style:{marginBottom:12}},
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--text2)',marginBottom:5}},
-            React.createElement('span',null,agent),
-            React.createElement('span',{style:{color:rate>0.9?'var(--green)':rate>0.85?'var(--green2)':'var(--accent2)',fontWeight:600}},`${(rate*100).toFixed(1)}%`)),
-          hbar(rate*100,rate>0.9?'var(--green)':rate>0.85?'var(--green2)':'var(--accent2)'))))));
+  return D(null,
+    D({display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:14},
+      D(card(),Lbl('Platform-Wide AI Resolution Rate'),D(syne(52,'var(--gr2)',{letterSpacing:-2,lineHeight:1}),'87.4%'),
+        S('AI RESOLUTION RATE -- 30-DAY ROLLING',mono(11,'var(--t3)')),
+        D({height:1,background:'var(--b)',margin:'14px 0'}),
+        D({display:'grid',gridTemplateColumns:'1fr 1fr',gap:10},...[['142K','Auto-resolved','var(--gr2)'],['18.2K','Human review','var(--am2)'],['2,100','Dispatched','var(--re2)'],['61%','Baseline','var(--t3)']].map(function(x){return D({key:x[1]},D(syne(20,x[2]),x[0]),D({fontSize:10,color:'var(--t3)'},x[1]));})),
+        (ins||ld)&&D({marginTop:14,padding:'10px 12px',background:'rgba(59,130,246,.06)',borderRadius:8,fontSize:12,color:'var(--t2)',lineHeight:1.6},D({fontSize:10,fontWeight:600,color:'var(--ac2)',letterSpacing:1,textTransform:'uppercase',marginBottom:4},'AI Insight'),ld?'Calculating...':ins)),
+      D(card(),Lbl('Resolution Funnel - 30 Days'),
+        ...funnel.map(function(f,i){return D({key:i,marginBottom:8},D({height:32,background:f[2],borderRadius:6,width:Math.max(f[1]*100,8)+'%',minWidth:90,display:'flex',alignItems:'center',paddingLeft:10,fontSize:11,fontWeight:600,color:f[3]},f[1]>.15?f[0]:''),f[1]<=.15&&D({fontSize:11,color:f[3],paddingLeft:4},f[0]),i<3&&D({fontSize:10,color:'var(--t3)',paddingLeft:4,marginBottom:4},'v AI processing'));}))),
+    D({display:'grid',gridTemplateColumns:'1fr 1fr',gap:14},
+      D(card(),Lbl('Live Resolution Log'),
+        evts.length===0&&D({fontSize:12,color:'var(--t3)',fontStyle:'italic'},'Waiting for events...'),
+        ...evts.map(function(ev){return D({key:ev.id,display:'flex',alignItems:'center',gap:8,padding:'7px 0',borderBottom:'1px solid rgba(255,255,255,.04)'},D({width:7,height:7,borderRadius:'50%',background:ev.c,flexShrink:0}),S(ev.ts,{...mono(10,'var(--t3)'),width:54,flexShrink:0}),D({fontSize:12,color:'var(--t2)',flex:1},ev.type),S(ev.disp.replace('-',' '),{fontSize:11,fontWeight:600,color:dc(ev.disp),whiteSpace:'nowrap',textTransform:'capitalize'}));})),
+      D(card(),Lbl('ARR by Agent'),
+        ...Object.entries(ARR_A).map(function(x){var ag=x[0],r=x[1]; return D({key:ag,marginBottom:12},D({display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--t2)',marginBottom:5},S(ag,null),S((r*100).toFixed(1)+'%',{color:r>.9?'var(--gr)':r>.85?'var(--gr2)':'var(--ac2)',fontWeight:600})),e(Bar,{pct:r*100,color:r>.9?'var(--gr)':r>.85?'var(--gr2)':'var(--ac2)'}));}))));
 }
 
-// -- Commercial AI ----------------------------------------------------------
-function CommercialAI({ apiKey }) {
-  const [view, setView] = useState('zones'); const [selected, setSelected] = useState(null); const [aiRec, setAiRec] = useState(''); const [loading, setLoading] = useState(false);
-  const handleZone = async (zone) => {
-    setSelected(zone); setAiRec(''); setLoading(false);
-    if (zone.threat==='alert'||zone.threat==='elevated') {
-      setLoading(true);
-      const r = await askClaude('You are the Aegis Commercial AI. Give a specific 2-sentence incident response protocol.',`Zone: ${zone.name}, Threat: ${zone.threat}, Score: ${zone.score}, Level ${zone.level} clearance, ${zone.alerts} active alerts.`, apiKey);
-      setAiRec(r); setLoading(false);
+// Commercial panel
+function CM({apiKey}){
+  var [view,setView]=useState('zones');var [sel,setSel]=useState(null);var [rec,setRec]=useState('');var [ld,setLd]=useState(false);
+  var pickZone=function(z){
+    setSel(z);setRec('');
+    if(z.threat==='alert'||z.threat==='elevated'){
+      setLd(true);
+      ask('You are the Aegis Commercial AI. Give a specific 2-sentence incident response protocol.','Zone: '+z.name+', Threat: '+z.threat+', Score: '+z.score+', Level '+z.level+' clearance, '+z.alerts+' active alerts.',apiKey).then(function(r){setRec(r);setLd(false);});
     }
   };
-  const tabBtn = (id, lbl) => React.createElement('button',{onClick:()=>setView(id),style:{padding:'7px 16px',fontSize:12,fontWeight:500,cursor:'pointer',border:'none',background:view===id?'var(--accent)':'transparent',color:view===id?'white':'var(--text3)',transition:'all .15s'}},lbl);
-  return React.createElement('div',null,
-    statsRow([['$80M+','Commercial SaaS 2024','^ ~25% YoY','#10b981'],['$20M','OpenEye SaaS','+ CHeKT RVM Feb 2025','#3b82f6'],['6','Zones Monitored',`${ZONES.filter(z=>z.threat==='alert').length} in alert`,'#ef4444'],['91.2%','Commercial AI ARR','vs 61% standard-tier','#8b5cf6']]),
-    React.createElement('div',{style:{display:'flex',gap:0,border:'1px solid var(--border)',borderRadius:8,overflow:'hidden',width:'fit-content',marginBottom:16}},
-      tabBtn('zones','Multi-Zone View'), tabBtn('access','Access Control AI'), tabBtn('timeline','Shift Timeline')),
-    view==='zones' && React.createElement('div',null,
-      React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:14}},
-        ...ZONES.map(zone=>React.createElement('div',{key:zone.id,onClick:()=>handleZone(zone),style:{background:selected?.id===zone.id?`${THREAT_COLORS[zone.threat]}10`:'var(--bg3)',border:`1px solid ${selected?.id===zone.id?THREAT_COLORS[zone.threat]:'var(--border)'}`,borderRadius:8,padding:12,cursor:'pointer',transition:'all .2s'}},
-          React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text)',marginBottom:4}},zone.name),
-          React.createElement('div',{style:{fontSize:11,color:'var(--text3)',marginBottom:6}},`${zone.hours} - ${zone.cameras} cameras`),
-          React.createElement('div',{style:{display:'flex',alignItems:'center',gap:6}},
-            React.createElement('span',{style:{background:`${THREAT_COLORS[zone.threat]}20`,color:THREAT_COLORS[zone.threat],padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,textTransform:'uppercase'}},zone.threat),
-            React.createElement('span',{style:{fontSize:11,color:'var(--text3)'}},`Score: ${zone.score}`))))),
-      selected && React.createElement('div',{style:{background:`${THREAT_COLORS[selected.threat]}08`,border:`1px solid ${THREAT_COLORS[selected.threat]}30`,borderRadius:10,padding:14}},
-        React.createElement('div',{style:{fontSize:11,fontWeight:600,color:THREAT_COLORS[selected.threat],marginBottom:8,textTransform:'uppercase',letterSpacing:0.5}},`Zone Detail - ${selected.name}`),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:10}},
-          ...[['Threat Score',selected.score.toFixed(1)],['Active Alerts',selected.alerts],['Clearance Level',selected.level],['Occupied',selected.occupied?'Yes':'No']].map(([l,v])=>
-            React.createElement('div',{key:l,style:{background:'rgba(0,0,0,0.3)',borderRadius:6,padding:10,textAlign:'center'}},
-              React.createElement('div',{style:{fontSize:18,fontWeight:700,color:'var(--text)'}},v),
-              React.createElement('div',{style:{fontSize:10,color:'var(--text3)'}},l)))),
-        (aiRec||loading) && React.createElement('div',{style:{fontSize:13,color:'var(--text2)',lineHeight:1.6}},
-          React.createElement('span',{style:{fontWeight:600,color:'var(--text)'}},'AI Recommendation: '),
-          loading?'Analyzing...':aiRec))),
-    view==='access' && React.createElement('div',{style:card()},
-      label('AI-Driven Access Control - Shift-Aware Behavioral Baseline'),
-      React.createElement('p',{style:{fontSize:13,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},'Unlike residential, commercial AI models shift patterns, role hierarchies, and cross-zone movement anomalies.'),
-      ...[
-        { init:'JM', name:'James Martinez', role:'Facilities Mgr', zone:'Loading Dock 06:42', result:'Granted - Normal', c:'#10b981', note:'Expected shift 06:00-14:00' },
-        { init:'SK', name:'Sarah Kim', role:'IT Engineer', zone:'Server Room 23:18', result:'Granted - Flagged', c:'#f59e0b', note:'Off-shift anomaly logged' },
-        { init:'??', name:'Unknown Badge #4471', role:'No profile match', zone:'Executive Floor 23:41', result:'Denied - AI Alert', c:'#ef4444', note:'AI Deterrence engaged' },
-        { init:'RP', name:'Robert Park', role:'VP Operations', zone:'All zones 08:15', result:'Granted - Normal', c:'#10b981', note:'Level 4 clearance, normal' },
-      ].map((ev,i)=>React.createElement('div',{key:i,style:{display:'flex',alignItems:'flex-start',gap:12,padding:10,background:'var(--bg3)',borderRadius:8,marginBottom:6}},
-        React.createElement('div',{style:{width:36,height:36,borderRadius:8,background:`${ev.c}15`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:600,color:ev.c,flexShrink:0}},ev.init),
-        React.createElement('div',{style:{flex:1}},
-          React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text)'}},ev.name),
-          React.createElement('div',{style:{fontSize:11,color:'var(--text3)',marginTop:1}},`${ev.role} - ${ev.zone}`),
-          React.createElement('div',{style:{fontSize:11,color:'var(--text3)',marginTop:1}},ev.note)),
-        React.createElement('div',{style:{fontSize:12,fontWeight:600,color:ev.c,whiteSpace:'nowrap'}},ev.result)))),
-    view==='timeline' && React.createElement('div',{style:card()},
-      label('AI Shift Timeline - 24-Hour Intelligence Log'),
-      ...[
-        { time:'23:41', c:'#ef4444', text:'AI ALERT: Unknown access attempt, Executive Floor. AI Deterrence engaged. Score 8.1.' },
-        { time:'22:15', c:'#f59e0b', text:'Anomaly: S. Kim badge - Server Room, off-shift deviation. Authorized but atypical. Logged.' },
-        { time:'20:00', c:'#3b82f6', text:'Shift transition: After-hours mode engaged. Lobby -> Watch, Server Room -> Elevated.' },
-        { time:'18:02', c:'#14b8a6', text:'Energy AI: End-of-day load shed. HVAC setback to 74F. Security Mesh protected - not shed.' },
-        { time:'14:30', c:'#10b981', text:'Auto-resolved: Parking motion. AI review: delivery vehicle, plate matched. No dispatch.' },
-        { time:'09:15', c:'#10b981', text:'Morning baseline: 47 employees badged in. Behavioral baseline updated. Threat: 1.4 (low).' },
-      ].map((item,i)=>React.createElement('div',{key:i,style:{display:'flex',gap:12,padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.04)',alignItems:'flex-start'}},
-        React.createElement('div',{style:{fontFamily:"'DM Mono',monospace",fontSize:10,color:'var(--text3)',width:44,flexShrink:0,paddingTop:2}},item.time),
-        React.createElement('div',{style:{width:8,height:8,borderRadius:'50%',background:item.c,flexShrink:0,marginTop:3}}),
-        React.createElement('div',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.5}},item.text)))));
+  var TB=function(id,lbl){return e('button',{onClick:function(){setView(id);},style:{padding:'7px 16px',fontSize:12,fontWeight:500,background:view===id?'var(--ac)':'transparent',color:view===id?'white':'var(--t3)',border:'none',transition:'all .15s'}},lbl);};
+  var AC=[
+    {ini:'JM',name:'James Martinez',role:'Facilities Mgr',zone:'Loading Dock 06:42',res:'Granted - Normal',c:'#10b981',note:'Expected shift 06:00-14:00'},
+    {ini:'SK',name:'Sarah Kim',role:'IT Engineer',zone:'Server Room 23:18',res:'Granted - Flagged',c:'#f59e0b',note:'Off-shift anomaly logged'},
+    {ini:'??',name:'Unknown Badge #4471',role:'No profile match',zone:'Executive Floor 23:41',res:'Denied - AI Alert',c:'#ef4444',note:'AI Deterrence engaged'},
+    {ini:'RP',name:'Robert Park',role:'VP Operations',zone:'All zones 08:15',res:'Granted - Normal',c:'#10b981',note:'Level 4 clearance, normal'},
+  ];
+  var TIM=[
+    {time:'23:41',c:'#ef4444',text:'AI ALERT: Unknown access attempt, Executive Floor. AI Deterrence engaged. Score 8.1.'},
+    {time:'22:15',c:'#f59e0b',text:'Anomaly: S. Kim badge - Server Room, off-shift deviation. Authorized but atypical. Logged.'},
+    {time:'20:00',c:'#3b82f6',text:'Shift transition: After-hours mode engaged. Lobby -> Watch, Server Room -> Elevated.'},
+    {time:'18:02',c:'#14b8a6',text:'Energy AI: End-of-day load shed. HVAC setback to 74F. Security Mesh protected - not shed.'},
+    {time:'14:30',c:'#10b981',text:'Auto-resolved: Parking motion. AI review: delivery vehicle, plate matched. No dispatch.'},
+    {time:'09:15',c:'#10b981',text:'Morning baseline: 47 employees badged in. Behavioral baseline updated. Threat: 1.4 (low).'},
+  ];
+  return D(null,
+    e(SR,{items:[['$80M+','Commercial SaaS 2024','^ ~25% YoY','#10b981'],['$20M','OpenEye SaaS','+ CHeKT RVM Feb 2025','#3b82f6'],[ZNS.filter(function(z){return z.threat==='alert';}).length+' in alert','Alert Zones','of 6 monitored','#ef4444'],['91.2%','Commercial AI ARR','vs 61% standard','#8b5cf6']]}),
+    D({display:'flex',gap:0,border:'1px solid var(--b)',borderRadius:8,overflow:'hidden',width:'fit-content',marginBottom:16},TB('zones','Multi-Zone View'),TB('access','Access Control AI'),TB('timeline','Shift Timeline')),
+    view==='zones'&&D(null,
+      D({display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:14},...ZNS.map(function(z){
+        return D({key:z.id,onClick:function(){pickZone(z);},background:sel&&sel.id===z.id?TC[z.threat]+'10':'var(--bg3)',border:'1px solid '+(sel&&sel.id===z.id?TC[z.threat]:'var(--b)'),borderRadius:8,padding:12,cursor:'pointer',transition:'all .2s'},
+          D({fontSize:13,fontWeight:600,color:'var(--t)',marginBottom:4},z.name),D({fontSize:11,color:'var(--t3)',marginBottom:6},z.hours+' - '+z.cams+' cameras'),
+          D({display:'flex',alignItems:'center',gap:6},S(z.threat,{background:TC[z.threat]+'20',color:TC[z.threat],padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,textTransform:'uppercase'}),S('Score: '+z.score,{fontSize:11,color:'var(--t3)'})));
+      })),
+      sel&&D({background:TC[sel.threat]+'08',border:'1px solid '+TC[sel.threat]+'30',borderRadius:10,padding:14},
+        D({fontSize:11,fontWeight:600,color:TC[sel.threat],marginBottom:8,textTransform:'uppercase',letterSpacing:.5},'Zone Detail - '+sel.name),
+        D({display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:10},...[['Threat Score',sel.score.toFixed(1)],['Active Alerts',sel.alerts],['Clearance Level',sel.level],['Occupied',sel.occ?'Yes':'No']].map(function(x){return D({key:x[0],background:'rgba(0,0,0,.3)',borderRadius:6,padding:10,textAlign:'center'},D({fontSize:18,fontWeight:700,color:'var(--t)'},x[1]),D({fontSize:10,color:'var(--t3)'},x[0]));})),
+        (rec||ld)&&D({fontSize:13,color:'var(--t2)',lineHeight:1.6},S('AI Recommendation: ',{fontWeight:600,color:'var(--t)'}),ld?'Analyzing...':rec))),
+    view==='access'&&D(card(),Lbl('Shift-Aware Access Control AI'),
+      e('p',{style:{fontSize:13,color:'var(--t2)',lineHeight:1.6,marginBottom:14}},'Commercial AI models shift patterns, role hierarchies, and cross-zone movement anomalies.'),
+      ...AC.map(function(a,i){return D({key:i,display:'flex',alignItems:'flex-start',gap:12,padding:10,background:'var(--bg3)',borderRadius:8,marginBottom:6},D({width:36,height:36,borderRadius:8,background:a.c+'15',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:600,color:a.c,flexShrink:0},a.ini),D({flex:1},D({fontSize:13,fontWeight:600,color:'var(--t)'},a.name),D({fontSize:11,color:'var(--t3)',marginTop:1},a.role+' - '+a.zone),D({fontSize:11,color:'var(--t3)',marginTop:1},a.note)),S(a.res,{fontSize:12,fontWeight:600,color:a.c,whiteSpace:'nowrap'}));})),
+    view==='timeline'&&D(card(),Lbl('AI Shift Timeline - 24-Hour Intelligence Log'),
+      ...TIM.map(function(item,i){return D({key:i,display:'flex',gap:12,padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,.04)',alignItems:'flex-start'},S(item.time,{...mono(10,'var(--t3)'),width:44,flexShrink:0,paddingTop:2}),D({width:8,height:8,borderRadius:'50%',background:item.c,flexShrink:0,marginTop:3}),D({fontSize:12,color:'var(--t2)',lineHeight:1.5},item.text));})));
 }
 
-// -- Domain Ontology --------------------------------------------------------
-function DomainOntology({ apiKey }) {
-  const [selected, setSelected] = useState(null); const [query, setQuery] = useState(''); const [answer, setAnswer] = useState(''); const [loading, setLoading] = useState(false); const [filter, setFilter] = useState(null);
-  const handleQuery = async () => {
-    if (!query.trim()) return;
-    setLoading(true); setAnswer('');
-    const relevant = ONT_NODES.filter(n => query.toLowerCase().split(' ').some(w => n.label.toLowerCase().includes(w) || n.domain.includes(w))).slice(0,5);
-    const ctx = relevant.map(n=>`${n.label} (${n.domain}): ${n.desc.slice(0,100)}`).join('; ');
-    const r = await askClaude('You are the Aegis Domain Ontology. Answer questions about the shared knowledge graph across AID, EnergyHub, OpenEye, CHeKT. Be specific, 3 sentences max.',`Context: ${ctx}. Question: ${query}`, apiKey);
-    setAnswer(r); setLoading(false);
+// Ontology panel
+function ON({apiKey}){
+  var [sel,setSel]=useState(null);var [q,setQ]=useState('');var [ans,setAns]=useState('');var [ld,setLd]=useState(false);var [filter,setFilter]=useState(null);
+  var doQuery=function(){
+    if(!q.trim())return;setLd(true);setAns('');
+    var rel=ONT.filter(function(n){return q.toLowerCase().split(' ').some(function(w){return n.label.toLowerCase().includes(w)||n.domain.includes(w);});}).slice(0,5);
+    var ctx=rel.map(function(n){return n.label+' ('+n.domain+'): '+n.desc.slice(0,100);}).join('; ');
+    ask('You are the Aegis Domain Ontology. Answer questions about the shared knowledge graph across AID, EnergyHub, OpenEye, CHeKT. Be specific, 3 sentences max.','Context: '+ctx+'. Question: '+q,apiKey).then(function(r){setAns(r);setLd(false);});
   };
-  const visible = filter ? ONT_NODES.filter(n=>n.domain===filter) : ONT_NODES;
-  const byDomain = d => visible.filter(n=>n.domain===d);
-  return React.createElement('div',null,
-    React.createElement('div',{style:{display:'flex',gap:8,marginBottom:12}},
-      React.createElement('input',{value:query,onChange:e=>setQuery(e.target.value),onKeyDown:e=>e.key==='Enter'&&handleQuery(),placeholder:'Ask the ontology: "Show threat patterns for retail after hours"',style:{flex:1,background:'var(--bg2)',border:'1px solid var(--border2)',borderRadius:8,padding:'10px 14px',fontSize:13,color:'var(--text)',fontFamily:'Inter,sans-serif',outline:'none'}}),
-      React.createElement('button',{onClick:handleQuery,style:{padding:'10px 18px',background:'var(--accent)',color:'white',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer'}},'Query')),
-    (answer||loading) && React.createElement('div',{style:{background:'rgba(59,130,246,0.06)',border:'1px solid rgba(59,130,246,0.2)',borderRadius:8,padding:'12px 14px',marginBottom:14,fontSize:13,color:'var(--text2)',lineHeight:1.6}},loading?'Querying ontology...':answer),
-    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:14}},
-      ...[['847','Property-type nodes','#10b981'],['3,241','Entity relationships','#3b82f6'],['142','Threat pattern types','#ef4444'],['89','Energy profiles','#f59e0b']].map(([n,l,c])=>
-        React.createElement('div',{key:l,style:{background:'var(--bg3)',borderRadius:8,padding:12,textAlign:'center'}},
-          syne(n,22,c), React.createElement('div',{style:{fontSize:10,color:'var(--text3)',marginTop:2}},l)))),
-    React.createElement('div',{style:{display:'flex',gap:6,marginBottom:14,flexWrap:'wrap'}},
-      React.createElement('button',{onClick:()=>setFilter(null),style:{padding:'4px 12px',borderRadius:20,border:`1px solid ${!filter?'var(--accent)':'var(--border2)'}`,background:!filter?'rgba(59,130,246,0.15)':'transparent',color:!filter?'var(--accent2)':'var(--text3)',fontSize:11,fontWeight:600,cursor:'pointer'}},'All Domains'),
-      ...['property','security','energy','behavioral'].map(d=>
-        React.createElement('button',{key:d,onClick:()=>setFilter(filter===d?null:d),style:{padding:'4px 12px',borderRadius:20,border:`1px solid ${filter===d?DOMAIN_COLORS[d]:'var(--border2)'}`,background:filter===d?`${DOMAIN_COLORS[d]}20`:'transparent',color:filter===d?DOMAIN_COLORS[d]:'var(--text3)',fontSize:11,fontWeight:600,cursor:'pointer',textTransform:'capitalize'}},d))),
-    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:14}},
-      ...visible.map(node=>React.createElement('div',{key:node.id,onClick:()=>setSelected(selected?.id===node.id?null:node),style:{background:selected?.id===node.id?`${DOMAIN_COLORS[node.domain]}12`:'var(--bg3)',border:`1px solid ${selected?.id===node.id?DOMAIN_COLORS[node.domain]:'var(--border)'}`,borderRadius:8,padding:'10px 12px',cursor:'pointer',transition:'all .15s'}},
-        React.createElement('div',{style:{fontSize:12,fontWeight:600,color:DOMAIN_COLORS[node.domain],marginBottom:3}},node.label),
-        React.createElement('div',{style:{fontSize:10,color:'var(--text3)',marginBottom:4,textTransform:'uppercase',letterSpacing:0.5}},node.domain),
-        React.createElement('div',{style:{fontSize:11,color:'var(--text3)',lineHeight:1.4}},node.desc.slice(0,70)+'...')))),
-    selected && React.createElement('div',{style:{background:'var(--bg2)',border:`1px solid ${DOMAIN_COLORS[selected.domain]}40`,borderRadius:10,padding:16}},
-      React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:8}},
-        React.createElement('div',{style:{width:10,height:10,borderRadius:'50%',background:DOMAIN_COLORS[selected.domain]}}),
-        React.createElement('div',{style:{fontSize:15,fontWeight:600,color:'var(--text)'}},selected.label),
-        React.createElement('span',{style:{fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:4,background:`${DOMAIN_COLORS[selected.domain]}20`,color:DOMAIN_COLORS[selected.domain],textTransform:'uppercase',letterSpacing:0.5,marginLeft:'auto'}},`${selected.count} entities`)),
-      React.createElement('p',{style:{fontSize:13,color:'var(--text2)',lineHeight:1.7}},selected.desc)));
+  var visible=filter?ONT.filter(function(n){return n.domain===filter;}):ONT;
+  return D(null,
+    D({display:'flex',gap:8,marginBottom:12},
+      e('input',{value:q,onChange:function(ev){setQ(ev.target.value);},onKeyDown:function(ev){if(ev.key==='Enter')doQuery();},placeholder:'Ask the ontology: "Show threat patterns for retail after hours"',style:{flex:1,background:'var(--bg2)',border:'1px solid var(--b2)',borderRadius:8,padding:'10px 14px',fontSize:13,color:'var(--t)',outline:'none'}}),
+      e('button',{onClick:doQuery,style:{padding:'10px 18px',background:'var(--ac)',color:'white',border:'none',borderRadius:8,fontSize:12,fontWeight:600}},'Query')),
+    (ans||ld)&&D({background:'rgba(59,130,246,.06)',border:'1px solid rgba(59,130,246,.2)',borderRadius:8,padding:'12px 14px',marginBottom:14,fontSize:13,color:'var(--t2)',lineHeight:1.6},ld?'Querying ontology...':ans),
+    D({display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:14},...[['847','Property-type nodes','#10b981'],['3,241','Entity relationships','#3b82f6'],['142','Threat pattern types','#ef4444'],['89','Energy profiles','#f59e0b']].map(function(x){return D({key:x[1],background:'var(--bg3)',borderRadius:8,padding:12,textAlign:'center'},D(syne(22,x[2]),x[0]),D({fontSize:10,color:'var(--t3)',marginTop:2},x[1]));})),
+    D({display:'flex',gap:6,marginBottom:14,flexWrap:'wrap'},
+      e('button',{onClick:function(){setFilter(null);},style:{padding:'4px 12px',borderRadius:20,border:'1px solid '+(filter?'var(--b2)':'var(--ac)'),background:filter?'transparent':'rgba(59,130,246,.15)',color:filter?'var(--t3)':'var(--ac2)',fontSize:11,fontWeight:600}},'All Domains'),
+      ...['property','security','energy','behavioral'].map(function(d){return e('button',{key:d,onClick:function(){setFilter(filter===d?null:d);},style:{padding:'4px 12px',borderRadius:20,border:'1px solid '+(filter===d?DC[d]:'var(--b2)'),background:filter===d?DC[d]+'20':'transparent',color:filter===d?DC[d]:'var(--t3)',fontSize:11,fontWeight:600,textTransform:'capitalize'}},d);})),
+    D({display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:14},...visible.map(function(node){
+      var isS=sel&&sel.id===node.id;
+      return D({key:node.id,onClick:function(){setSel(isS?null:node);},background:isS?DC[node.domain]+'12':'var(--bg3)',border:'1px solid '+(isS?DC[node.domain]:'var(--b)'),borderRadius:8,padding:'10px 12px',cursor:'pointer',transition:'all .15s'},
+        D({fontSize:12,fontWeight:600,color:DC[node.domain],marginBottom:3},node.label),D({fontSize:10,color:'var(--t3)',marginBottom:4,textTransform:'uppercase',letterSpacing:.5},node.domain),D({fontSize:11,color:'var(--t3)',lineHeight:1.4},node.desc.slice(0,70)+'...'));
+    })),
+    sel&&D({...card(),border:'1px solid '+DC[sel.domain]+'40'},D({display:'flex',alignItems:'center',gap:10,marginBottom:8},D({width:10,height:10,borderRadius:'50%',background:DC[sel.domain]}),D({fontSize:15,fontWeight:600,color:'var(--t)'},sel.label),S(sel.count+' entities',{fontSize:11,color:'var(--t3)',marginLeft:'auto'})),e('p',{style:{fontSize:13,color:'var(--t2)',lineHeight:1.7}},sel.desc)));
 }
 
-// -- EnergyHub + EV ---------------------------------------------------------
-function EvGrid() {
-  const [soc, setSoc] = useState(78);
-  useEffect(() => { const id = setInterval(()=>setSoc(s=>Math.min(s+0.1,90)), 4000); return ()=>clearInterval(id); }, []);
-  return React.createElement('div',null,
-    statsRow([['Off-Peak','TOU Mode Active','$0.08/kWh - Charging open','#10b981'],['6.2 kW','EV Charge Rate','Optimized for off-peak','#3b82f6'],[`${Math.round(soc)}%`,'Primary EV SOC','Target 90% by 06:00','#f59e0b'],['2,000+','Grid Calls 2024','44 GWh shifted','#8b5cf6']]),
-    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}},
-      React.createElement('div',{style:card()},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
-          label('EV Fleet - Grid Integration'), tag('GM Partnership','rgba(16,185,129,0.15)','var(--green2)')),
-        React.createElement('p',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.6,marginBottom:14}},'EnergyHub integrates directly with GM EVs (Chevy, GMC, Cadillac) and PowerBank home storage. Charging optimized against TOU windows and demand response signals.'),
-        ...[
-          { name:'2024 Chevrolet Blazer EV', sub:'Garage - Smart charging active', soc:Math.round(soc), rate:'6.2 kW', color:'#10b981' },
-          { name:'PowerBank Home Storage', sub:'Utility Room - Standby mode armed', soc:91, rate:'Standby', color:'#14b8a6' },
-        ].map((ev,i)=>React.createElement('div',{key:i,style:{display:'flex',alignItems:'flex-start',gap:12,background:'var(--bg3)',borderRadius:8,padding:12,marginBottom:8}},
-          React.createElement('div',{style:{width:36,height:36,background:'var(--bg4)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,flexShrink:0}},i===0?'[EV]':'[B]'),
-          React.createElement('div',{style:{flex:1}},
-            React.createElement('div',{style:{fontSize:13,fontWeight:600,color:'var(--text)'}},ev.name),
-            React.createElement('div',{style:{fontSize:11,color:'var(--text3)',marginTop:1}},ev.sub),
-            React.createElement('div',{style:{height:6,background:'var(--bg4)',borderRadius:3,marginTop:6,overflow:'hidden'}},
-              React.createElement('div',{style:{height:'100%',width:`${ev.soc}%`,background:ev.color,borderRadius:3,transition:'width 1s ease'}}))),
-          React.createElement('div',{style:{textAlign:'right'}},
-            React.createElement('div',{style:{fontFamily:"'DM Mono',monospace",fontSize:16,fontWeight:500,color:ev.color}},`${ev.soc}%`),
-            React.createElement('div',{style:{fontSize:10,color:'var(--text3)',marginTop:2}},ev.rate)))),
-        React.createElement('div',{style:{background:'var(--bg3)',borderRadius:8,padding:12,marginTop:4}},
-          label('PEMS Priority Stack'),
-          ...[['#ef4444','1. Safety','Life safety systems -- never shed'],['#f59e0b','2. Security Mesh','Protected -- cannot be shed'],['#10b981','3. Energy Efficiency','Optimize, shed deferrable loads']].map(([c,l,d],i)=>
-            React.createElement('div',{key:i,style:{display:'flex',alignItems:'flex-start',gap:8,marginBottom:i<2?6:0}},
-              React.createElement('div',{style:{width:8,height:8,borderRadius:2,background:c,flexShrink:0,marginTop:4}}),
-              React.createElement('div',{style:{fontSize:12,color:'var(--text2)'}}, React.createElement('strong',{style:{color:'var(--text)'}},l),' -- ',d))))),
-      React.createElement('div',{style:card()},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
-          label('Utility Grid Events'), tag('Grid-Interactive','rgba(20,184,166,0.15)','var(--teal2)')),
-        ...[
-          { type:'demand-response', c:'#3b82f6', title:'Demand Response', msg:'Dominion Energy DR call 18:00-21:00. EV charging paused. HVAC setback 2F. Savings: $3.40' },
-          { type:'off-peak', c:'#10b981', title:'Off-Peak Window', msg:'21:00 - now. EV charging resumed at 6.2 kW. Rate: $0.08/kWh. Full charge by 06:00.' },
-          { type:'nilm-alert', c:'#f59e0b', title:'NILM Alert', msg:'HVAC signature anomaly 14:32. Pattern deviation 23% above baseline. Maintenance recommended.' },
-        ].map((ev,i)=>React.createElement('div',{key:i,style:{display:'flex',alignItems:'flex-start',gap:10,padding:'10px 12px',background:`${ev.c}08`,border:`1px solid ${ev.c}25`,borderRadius:8,marginBottom:8}},
-          React.createElement('div',{style:{width:6,height:6,borderRadius:'50%',background:ev.c,flexShrink:0,marginTop:5}}),
-          React.createElement('div',null,
-            React.createElement('div',{style:{fontSize:11,fontWeight:600,color:ev.c,marginBottom:3}},ev.title),
-            React.createElement('div',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.5}},ev.msg)))),
-        React.createElement('div',{style:{marginTop:14}}),
-        label('TOU Windows - Dominion Energy'),
-        React.createElement('div',{style:{display:'flex',gap:0,borderRadius:6,overflow:'hidden',height:32}},
-          ...[['OFF-PEAK',38,'#10b981'],['MID',13,'#f59e0b'],['OFF-PEAK',25,'#10b981'],['MID',12,'#f59e0b'],['ON-PEAK',12,'#ef4444']].map(([l,p,c],i)=>
-            React.createElement('div',{key:i,style:{width:`${p}%`,background:`${c}25`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:c,borderRight:i<4?'1px solid var(--bg)':'none'}},p>=13?l:''))),
-        React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginTop:5,fontSize:10,color:'var(--text3)'}},
-          ...['$0.08/kWh','$0.16','$0.08','$0.16','$0.32'].map((r,i)=>React.createElement('span',{key:i,style:{color:['#10b981','#f59e0b','#10b981','#f59e0b','#ef4444'][i]}},r))))));
+// EV Grid
+function EV(){
+  var [soc,setSoc]=useState(78);
+  useEffect(function(){var id=setInterval(function(){setSoc(function(s){return Math.min(+(s+.1).toFixed(1),90);});},4000);return function(){clearInterval(id);};
+  },[]);
+  var GRID=[
+    {c:'#3b82f6',title:'Demand Response',msg:'Dominion Energy DR call 18:00-21:00. EV charging paused. HVAC setback 2F. Savings: $3.40'},
+    {c:'#10b981',title:'Off-Peak Window',msg:'21:00 to now. EV charging resumed at 6.2 kW. Rate: $0.08/kWh. Full charge by 06:00.'},
+    {c:'#f59e0b',title:'NILM Alert',msg:'HVAC signature anomaly 14:32. Pattern deviation 23% above baseline. Maintenance recommended.'},
+  ];
+  return D(null,
+    e(SR,{items:[['Off-Peak','TOU Mode Active','$0.08/kWh - charging open','#10b981'],['6.2 kW','EV Charge Rate','Optimized for off-peak','#3b82f6'],[Math.round(soc)+'%','Primary EV SOC','Target 90% by 06:00','#f59e0b'],['2,000+','Grid Calls 2024','44 GWh shifted','#8b5cf6']]}),
+    D({display:'grid',gridTemplateColumns:'1fr 1fr',gap:14},
+      D(card(),
+        D({display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14},Lbl('EV Fleet - Grid Integration'),Tag('GM Partnership','rgba(16,185,129,.15)','var(--gr2)')),
+        e('p',{style:{fontSize:12,color:'var(--t2)',lineHeight:1.6,marginBottom:14}},'EnergyHub integrates with GM EVs (Chevy, GMC, Cadillac) and PowerBank storage. Charging optimized against TOU windows and demand response signals.'),
+        ...[[{name:'2024 Chevrolet Blazer EV',sub:'Garage - Smart charging active',soc:Math.round(soc),rate:'6.2 kW',color:'#10b981'}],[{name:'PowerBank Home Storage',sub:'Utility Room - Standby armed',soc:91,rate:'Standby',color:'#14b8a6'}]].map(function(arr,i){var ev=arr[0];return D({key:i,display:'flex',alignItems:'flex-start',gap:12,background:'var(--bg3)',borderRadius:8,padding:12,marginBottom:8},D({width:36,height:36,background:'var(--bg4)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:'var(--t3)',flexShrink:0},i===0?'[EV]':'[BAT]'),D({flex:1},D({fontSize:13,fontWeight:600,color:'var(--t)'},ev.name),D({fontSize:11,color:'var(--t3)',marginTop:1},ev.sub),D({height:6,background:'var(--bg4)',borderRadius:3,marginTop:6,overflow:'hidden'},D({height:'100%',width:ev.soc+'%',background:ev.color,borderRadius:3,transition:'width 1s'}))),D({textAlign:'right'},S(ev.soc+'%',{...mono(16),color:ev.color,fontWeight:500}),D({fontSize:10,color:'var(--t3)',marginTop:2},ev.rate)));}),
+        D({background:'var(--bg3)',borderRadius:8,padding:12,marginTop:4},Lbl('PEMS Priority Stack'),
+          ...[['#ef4444','1. Safety','Life safety systems - never shed'],['#f59e0b','2. Security Mesh','Protected - cannot be shed'],['#10b981','3. Energy Efficiency','Optimize, shed deferrable loads']].map(function(x,i){return D({key:i,display:'flex',alignItems:'flex-start',gap:8,marginBottom:i<2?6:0},D({width:8,height:8,borderRadius:2,background:x[0],flexShrink:0,marginTop:4}),D({fontSize:12,color:'var(--t2)'},e('strong',{style:{color:'var(--t)'}},x[1]),' - ',x[2]));}))
+      ),
+      D(card(),
+        D({display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14},Lbl('Utility Grid Events'),Tag('Grid-Interactive','rgba(20,184,166,.15)','var(--te2)')),
+        ...GRID.map(function(ev,i){return D({key:i,display:'flex',alignItems:'flex-start',gap:10,padding:'10px 12px',background:ev.c+'08',border:'1px solid '+ev.c+'25',borderRadius:8,marginBottom:8},D({width:6,height:6,borderRadius:'50%',background:ev.c,flexShrink:0,marginTop:5}),D(null,D({fontSize:11,fontWeight:600,color:ev.c,marginBottom:3},ev.title),D({fontSize:12,color:'var(--t2)',lineHeight:1.5},ev.msg)));}),
+        D({marginTop:14}),Lbl('TOU Windows - Dominion Energy'),
+        D({display:'flex',gap:0,borderRadius:6,overflow:'hidden',height:32,marginBottom:5},...[['OFF-PEAK',38,'#10b981'],['MID',13,'#f59e0b'],['OFF-PEAK',25,'#10b981'],['MID',12,'#f59e0b'],['ON-PEAK',12,'#ef4444']].map(function(x,i){return D({key:i,width:x[1]+'%',background:x[2]+'25',display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:x[2],borderRight:i<4?'1px solid var(--bg)':'none'},x[1]>=13?x[0]:'');})),
+        D({display:'flex',justifyContent:'space-between',fontSize:10},...['$0.08','$0.16','$0.08','$0.16','$0.32'].map(function(r,i){return S(r,{key:i,color:['#10b981','#f59e0b','#10b981','#f59e0b','#ef4444'][i]});})))));
 }
 
-// -- Main App ---------------------------------------------------------------
-function App() {
-  const [tab, setTab] = useState('dashboard');
-  const [clock, setClock] = useState('');
-  const [mode, setMode] = useState('residential');
-  const [apiKey, setApiKey] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
-  const feed = useLiveFeed();
+// Main App
+function App(){
+  var [tab,setTab]=useState('dashboard');
+  var [mode,setMode]=useState('residential');
+  var [apiKey,setApiKey]=useState('');
+  var [showKey,setShowKey]=useState(false);
+  var [clk,setClk]=useState('');
+  var [feed,setFeed]=useState([]);
+  var fdIdx=useRef(0);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('aegis-api-key');
-    if (saved) setApiKey(saved);
-    const tick = () => setClock(new Date().toLocaleTimeString());
-    tick(); const id = setInterval(tick, 1000); return () => clearInterval(id);
-  }, []);
+  useEffect(function(){
+    var k=localStorage.getItem('aegis-v2-key');if(k)setApiKey(k);
+    var tc=function(){setClk(new Date().toLocaleTimeString());};tc();var ci=setInterval(tc,1000);
+    var tf=function(){setFeed(function(f){return [FD[fdIdx.current%FD.length],...f].slice(0,7);});fdIdx.current++;};tf();var fi=setInterval(tf,3200);
+    return function(){clearInterval(ci);clearInterval(fi);};
+  },[]);
 
-  const saveKey = (k) => { setApiKey(k); localStorage.setItem('aegis-api-key', k); };
+  function saveKey(k){setApiKey(k);localStorage.setItem('aegis-v2-key',k);}
 
-  function renderContent() {
-    switch(tab) {
-      case 'dashboard': return React.createElement('div', null,
-        React.createElement('div',{style:{marginBottom:20}},
-          React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontSize:22,fontWeight:700,color:'var(--text)'}}, 'Intelligence Dashboard'),
-          React.createElement('div',{style:{fontSize:13,color:'var(--text2)',marginTop:4}},'Unified view across Security, Energy, Commercial, Partner Network')),
-        statsRow([['9.3M','Connected Subscribers','^ 8.2% YoY','#3b82f6'],['87.4%','AI Resolution Rate','^ 12pts vs human-only','#10b981'],['1.6M','Grid-Edge Devices','44 GWh shifted 2024','#f59e0b'],['10,247','Active Service Providers','94 AI-tier partners','#8b5cf6']]),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:14}},
-          React.createElement('div',{style:card()},
-            React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}},
-              label('Live Intelligence Feed'), tag('Real-time','rgba(16,185,129,0.15)','var(--green2)')),
-            ...feed.map((item,i)=>React.createElement('div',{key:i,style:{display:'flex',gap:8,padding:'7px 0',borderBottom:'1px solid rgba(255,255,255,0.04)'}},
-              React.createElement('div',{style:{width:6,height:6,borderRadius:'50%',background:item.c,flexShrink:0,marginTop:5}}),
-              React.createElement('div',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.4}},item.t)))),
-          React.createElement('div',{style:card()},
-            label('Platform Growth Vectors'),
-            ...[ ['Commercial SaaS','$80M+ ^25%',78,'#10b981'], ['EnergyHub SaaS','$50M+ ^35%',62,'#14b8a6'], ['International','6% -> 10% target',38,'#8b5cf6'], ['AI Resolution Rate','87.4% target: 95%',87,'#3b82f6'] ].map(([l,v,p,c])=>
-              React.createElement('div',{key:l,style:{marginBottom:12}},
-                React.createElement('div',{style:{display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--text2)',marginBottom:5}}, React.createElement('span',null,l), React.createElement('span',{style:{color:'var(--text)',fontWeight:500}},v)),
-                hbar(p,c))))),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12}},
-          ...[ ['SP Intelligence','^ 94 AI-tier partners','sp','#3b82f6','rgba(59,130,246,0.15)'], ['AI Resolution','87.4% auto-resolved','arr','#10b981','rgba(16,185,129,0.15)'], ['Commercial AI','$80M+ ^25% YoY','commercial','#f59e0b','rgba(245,158,11,0.15)'], ['Domain Ontology','847 property-type nodes','ontology','#8b5cf6','rgba(139,92,246,0.15)'] ].map(([title,sub,t,c,bg])=>
-            React.createElement('div',{key:t,onClick:()=>setTab(t),style:{...card({cursor:'pointer',borderColor:`${c}30`,transition:'border-color .2s'})},
-              onMouseEnter:e=>e.currentTarget.style.borderColor=c, onMouseLeave:e=>e.currentTarget.style.borderColor=`${c}30`},
-              React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}},
-                React.createElement('div',{style:{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:0.5,color:'var(--text3)'}},title),
-                React.createElement('span',{style:{fontSize:9,fontWeight:600,padding:'2px 6px',borderRadius:4,background:bg,color:c}},'NEW v2')),
-              React.createElement('div',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.5}},sub))));
+  function navItem(item){
+    var active=tab===item.id;
+    return D({key:item.id,onClick:function(){setTab(item.id);},display:'flex',alignItems:'center',gap:9,padding:'7px 8px',borderRadius:7,cursor:'pointer',fontSize:12.5,marginBottom:1,background:active?'rgba(59,130,246,.12)':'transparent',color:active?'var(--ac2)':'var(--t2)',position:'relative',transition:'all .15s'},
+      active&&D({position:'absolute',left:0,top:'50%',transform:'translateY(-50%)',width:2,height:'60%',background:'var(--ac)',borderRadius:'0 2px 2px 0'}),
+      S(item.icon,{fontSize:10,width:16,textAlign:'center',flexShrink:0,...mono(10)}),item.label,
+      item.badge&&S(item.badge,{marginLeft:'auto',fontSize:9,fontWeight:600,padding:'2px 6px',borderRadius:10,background:item.badge==='NEW'?'rgba(59,130,246,.2)':'rgba(239,68,68,.2)',color:item.badge==='NEW'?'var(--ac2)':'var(--re2)',border:'1px solid '+(item.badge==='NEW'?'rgba(59,130,246,.3)':'rgba(239,68,68,.3)')}));
+  }
 
-      case 'agents': return React.createElement('div',null,
-        React.createElement('div',{style:{marginBottom:20}}, React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontSize:22,fontWeight:700,color:'var(--text)'}},'AI Agent Hub'), React.createElement('div',{style:{fontSize:13,color:'var(--text2)',marginTop:4}},'6 autonomous agents - security, energy, and access domains')),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}},
-          ...AGENTS.map((ag,i)=>React.createElement('div',{key:i,style:{...card({borderColor:`${ag.c}30`})}},
-            React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:8}},
-              React.createElement('div',{style:{width:8,height:8,borderRadius:'50%',background:ag.c,animation:ag.status==='Active'?'blink 2s infinite':'none'}}),
-              React.createElement('div',{style:{fontSize:14,fontWeight:600,color:ag.status==='Paused'?'var(--text2)':'var(--text)'}},ag.name),
-              React.createElement('span',{style:{marginLeft:'auto',fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:10,background:`${ag.c}15`,color:ag.c}},ag.status)),
-            React.createElement('div',{style:{fontSize:12,color:'var(--text2)',lineHeight:1.5,marginBottom:8}},ag.desc),
-            React.createElement('div',{style:{fontFamily:"'DM Mono',monospace",fontSize:11,color:'var(--text3)'}},`Triggers: ${ag.triggers.toLocaleString()} - ARR: ${ag.arr} - Last: ${ag.last}`))));
-
-      case 'cameras': return React.createElement('div',null,
-        React.createElement('div',{style:{marginBottom:20}}, React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontSize:22,fontWeight:700,color:'var(--text)'}},'Camera Intelligence'), React.createElement('div',{style:{fontSize:13,color:'var(--text2)',marginTop:4}},'AI detection - Natural language video search - RVM integration')),
-        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}},
-          ...['Front Door - 4K | Normal | #10b981', 'Garage - AI Active | Watching | #f59e0b', 'Perimeter - Alert | Alert | #ef4444'].map((s,i)=>{
-            const [lbl,status,col] = s.split(' | ');
-            return React.createElement('div',{key:i,style:{background:'var(--bg3)',border:`1px solid ${col}40`,borderRadius:8,overflow:'hidden'}},
-              React.createElement('canvas',{id:`cam-${i}`,width:280,height:158,style:{width:'100%',display:'block'},ref:el=>{
-                if(!el||el._init)return; el._init=true;
-                const ctx=el.getContext('2d'); const colors=['#0d2035','#1a1500','#1a0d0d'];
-                const bx=[col,col,col];
-                const draw=()=>{ctx.fillStyle=colors[i];ctx.fillRect(0,0,280,158);ctx.strokeStyle=bx[i];ctx.lineWidth=1.5;const x=40+Math.random()*100,y=30+Math.random()*60,w=60+Math.random()*40,h=50+Math.random()*30;ctx.strokeRect(x,y,w,h);ctx.fillStyle=bx[i];ctx.font='9px monospace';ctx.fillText(['Person 94%','Vehicle 87%','Motion 91%'][i],x,y-4);};
-                draw();setInterval(draw,900+i*200);
-              }}),
-              React.createElement('div',{style:{padding:'8px 10px',display:'flex',justifyContent:'space-between',alignItems:'center'}},
-                React.createElement('span',{style:{fontSize:11,color:'var(--text2)'}},lbl),
-                React.createElement('span',{style:{fontSize:10,fontWeight:600,padding:'2px 7px',borderRadius:4,background:`${col}20`,color:col}},status)));
+  function renderTab(){
+    switch(tab){
+      case 'dashboard': return D(null,
+        D({marginBottom:20},D(syne(22),'Intelligence Dashboard'),D({fontSize:13,color:'var(--t2)',marginTop:4},'Unified view across Security, Energy, Commercial, Partner Network')),
+        e(SR,{items:[['9.3M','Connected Subscribers','^ 8.2% YoY','#3b82f6'],['87.4%','AI Resolution Rate','^ 12pts vs human-only','#10b981'],['1.6M','Grid-Edge Devices','44 GWh shifted 2024','#f59e0b'],['10,247','Active Service Providers','94 AI-tier partners','#8b5cf6']]}),
+        D({display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:14},
+          D(card(),D({display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12},Lbl('Live Intelligence Feed'),Tag('Real-time','rgba(16,185,129,.15)','var(--gr2)')),
+            ...feed.map(function(item,i){return D({key:i,display:'flex',gap:8,padding:'7px 0',borderBottom:'1px solid rgba(255,255,255,.04)'},D({width:6,height:6,borderRadius:'50%',background:item.c,flexShrink:0,marginTop:5}),D({fontSize:12,color:'var(--t2)',lineHeight:1.4},item.t));})),
+          D(card(),Lbl('Platform Growth Vectors'),
+            ...[['Commercial SaaS','$80M+ ^25%',78,'#10b981'],['EnergyHub SaaS','$50M+ ^35%',62,'#14b8a6'],['International Revenue','6% -> 10% target',38,'#8b5cf6'],['AI Resolution Rate','87.4% target: 95%',87,'#3b82f6']].map(function(x){return D({key:x[0],marginBottom:12},D({display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--t2)',marginBottom:5},S(x[0],null),S(x[1],{color:'var(--t)',fontWeight:500})),e(Bar,{pct:x[2],color:x[3]}));}))),
+        D({display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12},
+          ...[['SP Intelligence','^ 94 AI-tier partners','sp','#3b82f6'],['AI Resolution','87.4% auto-resolved','arr','#10b981'],['Commercial AI','$80M+ ^25% YoY','commercial','#f59e0b'],['Domain Ontology','847 property-type nodes','ontology','#8b5cf6']].map(function(x){
+            return D({key:x[2],onClick:function(){setTab(x[2]);},onMouseEnter:function(ev){ev.currentTarget.style.borderColor=x[3];},onMouseLeave:function(ev){ev.currentTarget.style.borderColor=x[3]+'30';},
+              ...card({cursor:'pointer',borderColor:x[3]+'30',transition:'border-color .2s'})},
+              D({display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8},D({fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:.5,color:'var(--t3)'},x[0]),S('NEW v2',{fontSize:9,fontWeight:600,padding:'2px 6px',borderRadius:4,background:x[3]+'20',color:x[3]})),D({fontSize:12,color:'var(--t2)',lineHeight:1.5},x[1]));
           })));
-
-      case 'energyhub': return React.createElement('div',null, pageHead('EnergyHub + EV Grid Intelligence','$50M+ SaaS - 1.6M grid-edge devices - GM EV partnership active'), React.createElement(EvGrid,null));
-      case 'sp': return React.createElement('div',null, pageHead('Service Provider Intelligence','Fleet-wide AI performance metrics for 10,247 active partners'), React.createElement(SpIntelligence,{apiKey}));
-      case 'arr': return React.createElement('div',null, pageHead('AI Resolution Rate Metrics','Outcome-based pricing proof point -- from events to autonomous resolutions'), React.createElement(ArrPanel,{apiKey}));
-      case 'commercial': return React.createElement('div',null, pageHead('Commercial Property Intelligence','AI-native operations for commercial -- $80M+ SaaS, ~25% YoY'), React.createElement(CommercialAI,{apiKey}));
-      case 'ontology': return React.createElement('div',null, pageHead('Domain Intelligence Ontology','Shared knowledge graph unifying AID, EnergyHub, OpenEye, CHeKT'), React.createElement(DomainOntology,{apiKey}));
-
-      case 'analytics': return React.createElement('div',null,
-        React.createElement('div',{style:{marginBottom:20}}, React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontSize:22,fontWeight:700,color:'var(--text)'}},'Platform Analytics'), React.createElement('div',{style:{fontSize:13,color:'var(--text2)',marginTop:4}},'Financial metrics - AI performance - Business impact model')),
-        statsRow([['$631M','SaaS Revenue 2024','^ 10.9% YoY','#3b82f6'],['87.4%','Platform ARR','Target: 95% Q4 2025','#10b981'],['$122.5M','GAAP Net Income 2024','^ 53% from $80.3M','#f59e0b'],['$176M','Adj. EBITDA 2024','Strong operational leverage','#8b5cf6']]),
-        React.createElement('div',{style:card()},
-          label('AI Platform ROI Model'),
-          React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14}},
-            ...[['$340M','ARR Improvement Value','Addressable outcome premium at $4/resolved event','#34d399'],['$71M','SP AI-Tier Pipeline','Incremental ARR if 2,847 standard SPs upgrade','#fcd34d'],['10x','Data Flywheel Moat','Model accuracy from 9.3M-subscriber unified ontology','#a78bfa']].map(([n,l,s,c])=>
-              React.createElement('div',{key:l,style:{background:'var(--bg3)',borderRadius:8,padding:16,textAlign:'center'}},
-                syne(n,30,c,{letterSpacing:-1}),
-                React.createElement('div',{style:{fontSize:12,color:'var(--text2)',marginTop:4,fontWeight:500}},l),
-                React.createElement('div',{style:{fontSize:11,color:'var(--text3)',marginTop:4}},s))))));
+      case 'agents': return D(null,
+        D({marginBottom:20},D(syne(22),'AI Agent Hub'),D({fontSize:13,color:'var(--t2)',marginTop:4},'6 autonomous agents - security, energy, and access domains')),
+        D({display:'grid',gridTemplateColumns:'1fr 1fr',gap:12},...AGS.map(function(ag,i){
+          return D({key:i,...card({borderColor:ag.c+'30'})},D({display:'flex',alignItems:'center',gap:10,marginBottom:8},D({width:8,height:8,borderRadius:'50%',background:ag.c,animation:ag.status==='Active'?'blink 2s infinite':'none'}),D({fontSize:14,fontWeight:600,color:ag.status==='Paused'?'var(--t2)':'var(--t)'},ag.name),S(ag.status,{marginLeft:'auto',fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:10,background:ag.c+'15',color:ag.c})),D({fontSize:12,color:'var(--t2)',lineHeight:1.5,marginBottom:8},ag.desc),S('Triggers: '+ag.triggers.toLocaleString()+' - ARR: '+ag.arr+' - Last: '+ag.last,mono(11,'var(--t3)')));
+        })));
+      case 'cameras': return D(null,
+        D({marginBottom:20},D(syne(22),'Camera Intelligence'),D({fontSize:13,color:'var(--t2)',marginTop:4},'AI detection - Natural language video search - RVM integration')),
+        D({display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10},e(Cam,{key:0,idx:0,label:'Front Door - 4K',status:'Normal',col:'#10b981'}),e(Cam,{key:1,idx:1,label:'Garage - AI Active',status:'Watching',col:'#f59e0b'}),e(Cam,{key:2,idx:2,label:'Perimeter - Alert',status:'Alert',col:'#ef4444'})));
+      case 'energyhub': return D(null,e(PH,{title:'EnergyHub + EV Grid Intelligence',sub:'$50M+ SaaS - 1.6M grid-edge devices - GM EV partnership active'}),e(EV,null));
+      case 'sp': return D(null,e(PH,{title:'Service Provider Intelligence',sub:'Fleet-wide AI performance metrics for 10,247 active partners'}),e(SP,{apiKey}));
+      case 'arr': return D(null,e(PH,{title:'AI Resolution Rate Metrics',sub:'Outcome-based pricing proof point - from events to autonomous resolutions'}),e(AR,{apiKey}));
+      case 'commercial': return D(null,e(PH,{title:'Commercial Property Intelligence',sub:'AI-native operations for commercial - $80M+ SaaS, ~25% YoY'}),e(CM,{apiKey}));
+      case 'ontology': return D(null,e(PH,{title:'Domain Intelligence Ontology',sub:'Shared knowledge graph unifying AID, EnergyHub, OpenEye, CHeKT'}),e(ON,{apiKey}));
+      case 'analytics': return D(null,
+        D({marginBottom:20},D(syne(22),'Platform Analytics'),D({fontSize:13,color:'var(--t2)',marginTop:4},'Financial metrics - AI performance - Business impact model')),
+        e(SR,{items:[['$631M','SaaS Revenue 2024','^ 10.9% YoY','#3b82f6'],['87.4%','Platform ARR','Target: 95% Q4 2025','#10b981'],['$122.5M','GAAP Net Income 2024','^ 53% from $80.3M','#f59e0b'],['$176M','Adj. EBITDA 2024','Strong operational leverage','#8b5cf6']]}),
+        D(card(),Lbl('AI Platform ROI Model'),D({display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14},...[['$340M','ARR Improvement Value','Addressable outcome premium at $4/resolved event','#34d399'],['$71M','SP AI-Tier Pipeline','Incremental ARR from 2,847 standard SP upgrades','#fcd34d'],['10x','Data Flywheel Moat','Model accuracy from 9.3M-subscriber unified ontology','#a78bfa']].map(function(x){return D({key:x[1],background:'var(--bg3)',borderRadius:8,padding:16,textAlign:'center'},D(syne(30,x[3],{letterSpacing:-1}),x[0]),D({fontSize:12,color:'var(--t2)',marginTop:4,fontWeight:500},x[1]),D({fontSize:11,color:'var(--t3)',marginTop:4},x[2]));}))));
       default: return null;
     }
   }
 
-  return React.createElement('div',{style:{display:'grid',gridTemplateRows:'56px 1fr',gridTemplateColumns:'220px 1fr',height:'100vh',overflow:'hidden'}},
+  return D({display:'grid',gridTemplateRows:'56px 1fr',gridTemplateColumns:'220px 1fr',height:'100vh',overflow:'hidden'},
     // Topbar
-    React.createElement('div',{style:{gridColumn:'1/-1',background:'var(--bg2)',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',padding:'0 20px',gap:16,zIndex:100}},
-      React.createElement('div',{style:{fontFamily:"'Syne',sans-serif",fontWeight:800,fontSize:18,letterSpacing:-0.5,display:'flex',alignItems:'center',gap:8}},
-        React.createElement('svg',{width:26,height:26,viewBox:'0 0 26 26',fill:'none'},
-          React.createElement('path',{d:'M13 2L22.5 7.5V18.5L13 24L3.5 18.5V7.5L13 2Z',fill:'rgba(59,130,246,0.15)',stroke:'#3b82f6',strokeWidth:1}),
-          React.createElement('path',{d:'M13 7L18 10V16L13 19L8 16V10L13 7Z',fill:'#3b82f6',opacity:0.6}),
-          React.createElement('circle',{cx:13,cy:13,r:2,fill:'#60a5fa'})),
-        'Aegis',
-        React.createElement('span',{style:{fontSize:11,fontWeight:600,background:'var(--accent)',color:'white',padding:'2px 6px',borderRadius:4,fontFamily:"'DM Mono',monospace"}},'v2')),
-      React.createElement('div',{style:{display:'flex',gap:6,marginLeft:'auto',alignItems:'center'}},
-        React.createElement('div',{style:{display:'flex',alignItems:'center',gap:5,padding:'4px 10px',border:'1px solid var(--border)',borderRadius:20,fontSize:11,fontWeight:500}},
-          React.createElement('div',{style:{width:6,height:6,borderRadius:'50%',background:'var(--green)',animation:'blink 2s infinite'}}),
-          React.createElement('span',{style:{color:'var(--green)'}},'LIVE')),
-        ...['residential','commercial'].map(m=>
-          React.createElement('button',{key:m,onClick:()=>setMode(m),style:{padding:'4px 10px',border:`1px solid ${mode===m?'var(--accent)':'var(--border2)'}`,borderRadius:20,cursor:'pointer',fontSize:11,fontWeight:500,background:'transparent',color:mode===m?'var(--accent2)':'var(--text2)',textTransform:'capitalize'}},m)),
-        React.createElement('button',{onClick:()=>setShowSettings(s=>!s),style:{padding:'4px 10px',border:`1px solid ${apiKey?'var(--green)':'var(--border2)'}`,borderRadius:20,cursor:'pointer',fontSize:11,fontWeight:500,background:'transparent',color:apiKey?'var(--green2)':'var(--text3)'}},apiKey?'API: Active':'API Key'),
-        React.createElement('span',{style:{fontFamily:"'DM Mono',monospace",fontSize:12,color:'var(--text3)',marginLeft:8}},clock))),
+    D({gridColumn:'1/-1',background:'var(--bg2)',borderBottom:'1px solid var(--b)',display:'flex',alignItems:'center',padding:'0 20px',gap:16,zIndex:100},
+      D({...syne(18),display:'flex',alignItems:'center',gap:8},
+        e('svg',{width:26,height:26,viewBox:'0 0 26 26',fill:'none'},
+          e('path',{d:'M13 2L22.5 7.5V18.5L13 24L3.5 18.5V7.5L13 2Z',fill:'rgba(59,130,246,.15)',stroke:'#3b82f6',strokeWidth:1}),
+          e('path',{d:'M13 7L18 10V16L13 19L8 16V10L13 7Z',fill:'#3b82f6',opacity:.6}),
+          e('circle',{cx:13,cy:13,r:2,fill:'#60a5fa'})),
+        'Aegis',S('v2',{fontSize:11,fontWeight:600,background:'var(--ac)',color:'white',padding:'2px 6px',borderRadius:4,...mono(11)})),
+      D({display:'flex',gap:6,marginLeft:'auto',alignItems:'center'},
+        D({display:'flex',alignItems:'center',gap:5,padding:'4px 10px',border:'1px solid var(--b)',borderRadius:20,fontSize:11,fontWeight:500},D({width:6,height:6,borderRadius:'50%',background:'var(--gr)',animation:'blink 2s infinite'}),' LIVE'),
+        ...['residential','commercial'].map(function(m){return e('button',{key:m,onClick:function(){setMode(m);},style:{padding:'4px 10px',border:'1px solid '+(mode===m?'var(--ac)':'var(--b2)'),borderRadius:20,fontSize:11,fontWeight:500,background:'transparent',color:mode===m?'var(--ac2)':'var(--t2)',textTransform:'capitalize'}},m);}),
+        e('button',{onClick:function(){setShowKey(function(s){return !s;});},style:{padding:'4px 10px',border:'1px solid '+(apiKey?'var(--gr)':'var(--b2)'),borderRadius:20,fontSize:11,fontWeight:500,background:'transparent',color:apiKey?'var(--gr2)':'var(--t3)'}},apiKey?'API: Active':'API Key'),
+        S(clk,{...mono(12,'var(--t3)'),marginLeft:8}))),
     // Sidebar
-    React.createElement('div',{style:{background:'var(--bg2)',borderRight:'1px solid var(--border)',overflowY:'auto',padding:'16px 0'}},
-      ...['Core Platform','Aegis v2 -- New'].map(section=>
-        React.createElement('div',{key:section,style:{padding:'0 12px',marginBottom:4}},
-          React.createElement('div',{style:{fontSize:9,fontWeight:600,letterSpacing:1.5,textTransform:'uppercase',color:'var(--text3)',padding:'8px 8px 4px'}},section),
-          ...NAV.filter(n=>section.includes('v2')?n.v2:!n.v2).map(item=>
-            React.createElement('div',{key:item.id,onClick:()=>setTab(item.id),style:{display:'flex',alignItems:'center',gap:9,padding:'7px 8px',borderRadius:7,cursor:'pointer',fontSize:12.5,marginBottom:1,background:tab===item.id?'rgba(59,130,246,0.12)':'transparent',color:tab===item.id?'var(--accent2)':'var(--text2)',position:'relative',transition:'all .15s'}},
-              tab===item.id && React.createElement('div',{style:{position:'absolute',left:0,top:'50%',transform:'translateY(-50%)',width:2,height:'60%',background:'var(--accent)',borderRadius:'0 2px 2px 0'}}),
-              React.createElement('span',{style:{fontSize:11,width:16,textAlign:'center',flexShrink:0,fontFamily:"'DM Mono',monospace"}},item.icon),
-              item.label,
-              item.badge && React.createElement('span',{style:{marginLeft:'auto',fontSize:9,fontWeight:600,padding:'2px 6px',borderRadius:10,background:item.badge==='NEW'?'rgba(59,130,246,0.2)':'rgba(239,68,68,0.2)',color:item.badge==='NEW'?'var(--accent2)':'var(--red2)'}},item.badge))))),
-      React.createElement('div',{style:{padding:'14px 20px',marginTop:8,borderTop:'1px solid var(--border)'}},
-        React.createElement('div',{style:{fontSize:10,color:'var(--text3)',letterSpacing:0.5,textTransform:'uppercase',marginBottom:8}},'Platform Health'),
-        ...[['Intelligence Layer','Active','var(--green)'],['Domain Ontology','Synced','var(--green)'],['PEMS Mode','Off-Peak','var(--amber)'],['Partner API','Healthy','var(--green)']].map(([l,v,c])=>
-          React.createElement('div',{key:l,style:{fontSize:11,color:'var(--text2)',marginBottom:4,display:'flex',justifyContent:'space-between'}},
-            React.createElement('span',null,l), React.createElement('span',{style:{color:c}},v))))),
+    D({background:'var(--bg2)',borderRight:'1px solid var(--b)',overflowY:'auto',padding:'16px 0'},
+      D({padding:'0 12px',marginBottom:4},D({fontSize:9,fontWeight:600,letterSpacing:1.5,textTransform:'uppercase',color:'var(--t3)',padding:'8px 8px 4px'},'Core Platform'),...NAV.filter(function(n){return !n.v2;}).map(navItem)),
+      D({padding:'0 12px',marginBottom:4},D({fontSize:9,fontWeight:600,letterSpacing:1.5,textTransform:'uppercase',color:'var(--t3)',padding:'8px 8px 4px'},'Aegis v2 -- New'),...NAV.filter(function(n){return n.v2;}).map(navItem)),
+      D({padding:'14px 20px',marginTop:8,borderTop:'1px solid var(--b)'},D({fontSize:10,color:'var(--t3)',letterSpacing:.5,textTransform:'uppercase',marginBottom:8},'Platform Health'),
+        ...[['Intelligence Layer','Active','var(--gr)'],['Domain Ontology','Synced','var(--gr)'],['PEMS Mode','Off-Peak','var(--am)'],['Partner API','Healthy','var(--gr)']].map(function(x){return D({key:x[0],fontSize:11,color:'var(--t2)',marginBottom:4,display:'flex',justifyContent:'space-between'},S(x[0],null),S(x[1],{color:x[2]}));}))),
     // Content
-    React.createElement('div',{style:{overflowY:'auto',background:'var(--bg)',padding:24}},
-      showSettings && React.createElement('div',{style:{...card({marginBottom:20,borderColor:'rgba(59,130,246,0.3)'})}},
-        React.createElement('div',{style:{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:8}},'Anthropic API Key'),
-        React.createElement('p',{style:{fontSize:12,color:'var(--text3)',marginBottom:12}},'Required for AI features (ontology queries, SP analysis, zone alerts). Key is stored locally only.'),
-        React.createElement('div',{style:{display:'flex',gap:8}},
-          React.createElement('input',{type:'password',value:apiKey,onChange:e=>saveKey(e.target.value),placeholder:'sk-ant-api03-...',style:{flex:1,background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:8,padding:'8px 12px',fontSize:13,color:'var(--text)',fontFamily:'Inter,sans-serif',outline:'none'}}),
-          React.createElement('button',{onClick:()=>setShowSettings(false),style:{padding:'8px 16px',background:'var(--accent)',color:'white',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer'}},'Save'))),
-      React.createElement('div',{key:tab,style:{animation:'slideIn .2s ease'}}, renderContent())));
+    D({overflowY:'auto',background:'var(--bg)',padding:24},
+      showKey&&D({...card({marginBottom:20,borderColor:'rgba(59,130,246,.3)'}),},
+        D({fontSize:14,fontWeight:600,color:'var(--t)',marginBottom:8},'Anthropic API Key'),
+        e('p',{style:{fontSize:12,color:'var(--t3)',marginBottom:12}},'Required for live AI features (ontology queries, SP analysis, zone alerts). Stored locally only, never transmitted anywhere except Anthropic.'),
+        D({display:'flex',gap:8},
+          e('input',{type:'password',value:apiKey,onChange:function(ev){saveKey(ev.target.value);},placeholder:'sk-ant-api03-...',style:{flex:1,background:'var(--bg3)',border:'1px solid var(--b2)',borderRadius:8,padding:'8px 12px',fontSize:13,color:'var(--t)',outline:'none'}}),
+          e('button',{onClick:function(){setShowKey(false);},style:{padding:'8px 16px',background:'var(--ac)',color:'white',border:'none',borderRadius:8,fontSize:12,fontWeight:600}},'Save'))),
+      renderTab()));
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(App));
+ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+})();
 </script>
 </body>
 </html>
