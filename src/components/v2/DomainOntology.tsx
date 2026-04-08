@@ -40,7 +40,7 @@ export default function DomainOntology() {
       const ans = await queryOntology(nlQuery, relevant);
       setNlAnswer(ans);
     } catch {
-      setNlAnswer('Ontology query unavailable — check API key in .env');
+      setNlAnswer('Ontology query unavailable -- check API key in .env');
     } finally {
       setNlLoading(false);
     }
@@ -121,7 +121,7 @@ export default function DomainOntology() {
               boxShadow: selected?.id === hub.id ? '0 0 20px rgba(59,130,246,0.3)' : 'none',
             }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--accent2)', fontFamily: "'Syne', sans-serif" }}>Property Intelligence Hub</div>
-              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>Central coordination node — all domain signals converge here</div>
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>Central coordination node -- all domain signals converge here</div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8 }}>
                 {['property', 'security', 'energy', 'behavioral'].map(d => (
                   <div key={d} style={{ width: 8, height: 8, borderRadius: '50%', background: DOMAIN_COLORS[d] }} />
@@ -130,7 +130,7 @@ export default function DomainOntology() {
             </div>
           )}
           <div style={{ fontSize: 12, color: 'var(--text3)', textAlign: 'center', lineHeight: 1.5 }}>
-            The shared knowledge graph that lets AID, EnergyHub, OpenEye, and CHeKT share intelligence — the hardest architectural problem in the platform.
+            The shared knowledge graph that lets AID, EnergyHub, OpenEye, and CHeKT share intelligence -- the hardest architectural problem in the platform.
           </div>
         </div>
 
@@ -199,7 +199,7 @@ function NodeCard({ node, selected, onClick }: { node: OntologyNode; selected: b
     }}>
       <div style={{ fontSize: 12, fontWeight: 600, color: c, marginBottom: 3 }}>{node.label}</div>
       <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.4 }}>
-        {node.description.slice(0, 72)}…
+        {node.description.slice(0, 72)}...
       </div>
     </div>
   );

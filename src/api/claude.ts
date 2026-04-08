@@ -23,13 +23,13 @@ async function callClaude(systemPrompt: string, userMessage: string): Promise<st
   return data.content?.[0]?.text ?? '';
 }
 
-// ── V1 context builders ────────────────────────────────────────────────────
+// -- V1 context builders ----------------------------------------------------
 
 export function buildSecurityContext(threatScore: number, activeAgents: number): string {
   return `You are the Aegis Security Intelligence core. Current platform state:
 - Threat score: ${threatScore}/10
 - Active AI agents: ${activeAgents}
-- Platform: Aegis v2 — Autonomous Property Intelligence
+- Platform: Aegis v2 -- Autonomous Property Intelligence
 - Priority stack: Safety > Security > Energy Efficiency
 Provide concise, actionable security guidance. Never recommend reducing security posture.`;
 }
@@ -38,7 +38,7 @@ export function buildPEMSContext(state: PemsState): string {
   return `You are the Aegis PEMS (Predictive Energy Management System) advisor.
 Current state:
 - TOU window: ${state.touWindow} at $${state.ratePerKwh}/kWh
-- Total load: ${state.totalLoadKw} kW (Security Mesh: ${state.securityMeshKw} kW — protected, never shed)
+- Total load: ${state.totalLoadKw} kW (Security Mesh: ${state.securityMeshKw} kW -- protected, never shed)
 - Battery: ${state.batteryPct}%
 - PEMS mode: ${state.mode}
 - EVs enrolled: ${state.evCount}
@@ -48,7 +48,7 @@ Give specific, quantified energy optimization recommendations.`;
 
 export async function parseAutomation(nlRule: string): Promise<{ trigger: string; action: string }> {
   const system = `You are the Aegis NL Automation Parser. Convert natural language automation rules into structured JSON.
-Respond ONLY with valid JSON: {"trigger": "...", "action": "..."} — no preamble, no markdown.`;
+Respond ONLY with valid JSON: {"trigger": "...", "action": "..."} -- no preamble, no markdown.`;
   const raw = await callClaude(system, nlRule);
   try {
     const clean = raw.replace(/```json|```/g, '').trim();
@@ -58,7 +58,7 @@ Respond ONLY with valid JSON: {"trigger": "...", "action": "..."} — no preambl
   }
 }
 
-// ── V2 context builders ────────────────────────────────────────────────────
+// -- V2 context builders ----------------------------------------------------
 
 export async function queryOntology(
   question: string,

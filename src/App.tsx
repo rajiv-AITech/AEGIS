@@ -6,9 +6,9 @@ import DomainOntology from '@/components/v2/DomainOntology';
 import EvGrid from '@/components/v2/EvGrid';
 import { useV2Store } from '@/store/useV2Store';
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // Types
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 type TabId =
   | 'dashboard' | 'cameras' | 'agents' | 'energyhub'
   | 'sp' | 'arr' | 'commercial' | 'ontology' | 'digital' | 'analytics';
@@ -16,21 +16,21 @@ type TabId =
 interface NavItem { id: TabId; label: string; icon: string; badge?: string; v2?: boolean }
 
 const NAV: NavItem[] = [
-  { id: 'dashboard',  label: 'Dashboard',         icon: '◈' },
-  { id: 'cameras',    label: 'Cameras',            icon: '◉' },
-  { id: 'agents',     label: 'AI Agents',          icon: '⬡', badge: '6 Active' },
-  { id: 'energyhub',  label: 'EnergyHub',          icon: '◎', badge: 'EV', v2: true },
-  { id: 'sp',         label: 'SP Intelligence',    icon: '⬢', badge: 'NEW', v2: true },
-  { id: 'arr',        label: 'AI Resolution',      icon: '◆', badge: 'NEW', v2: true },
-  { id: 'commercial', label: 'Commercial AI',      icon: '▦', badge: 'NEW', v2: true },
-  { id: 'ontology',   label: 'Domain Ontology',    icon: '⬡', badge: 'NEW', v2: true },
-  { id: 'digital',    label: 'Digital Twin',       icon: '⬡' },
-  { id: 'analytics',  label: 'Analytics',          icon: '◈' },
+  { id: 'dashboard',  label: 'Dashboard',         icon: '*' },
+  { id: 'cameras',    label: 'Cameras',            icon: 'o' },
+  { id: 'agents',     label: 'AI Agents',          icon: 'H', badge: '6 Active' },
+  { id: 'energyhub',  label: 'EnergyHub',          icon: 'O', badge: 'EV', v2: true },
+  { id: 'sp',         label: 'SP Intelligence',    icon: 'H', badge: 'NEW', v2: true },
+  { id: 'arr',        label: 'AI Resolution',      icon: '*', badge: 'NEW', v2: true },
+  { id: 'commercial', label: 'Commercial AI',      icon: '#', badge: 'NEW', v2: true },
+  { id: 'ontology',   label: 'Domain Ontology',    icon: 'H', badge: 'NEW', v2: true },
+  { id: 'digital',    label: 'Digital Twin',       icon: 'H' },
+  { id: 'analytics',  label: 'Analytics',          icon: '*' },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // Inline styles helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 const card = (extra?: React.CSSProperties): React.CSSProperties => ({
   background: 'var(--bg2)', border: '1px solid var(--border)',
   borderRadius: 10, padding: 16, ...extra,
@@ -41,18 +41,18 @@ const statCard = (): React.CSSProperties => ({
   borderRadius: 10, padding: '14px 16px', position: 'relative', overflow: 'hidden',
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // Lightweight live-feed hook
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 const FEED_ITEMS = [
-  { c: '#10b981', t: 'AI Deterrence resolved perimeter motion — Great Falls, VA (confidence: 94%)' },
-  { c: '#f59e0b', t: 'EnergyHub: demand response signal from Dominion — load shed initiated' },
-  { c: '#3b82f6', t: 'SP Guardian Security: 48,210 subscribers synced — ARR 93.1%' },
-  { c: '#10b981', t: 'RVM auto-resolved: delivery vehicle identified at 94 SPs — no dispatch' },
-  { c: '#ef4444', t: 'Commercial alert: unknown badge attempt — Executive Floor, AI Deterrence active' },
+  { c: '#10b981', t: 'AI Deterrence resolved perimeter motion -- Great Falls, VA (confidence: 94%)' },
+  { c: '#f59e0b', t: 'EnergyHub: demand response signal from Dominion -- load shed initiated' },
+  { c: '#3b82f6', t: 'SP Guardian Security: 48,210 subscribers synced -- ARR 93.1%' },
+  { c: '#10b981', t: 'RVM auto-resolved: delivery vehicle identified at 94 SPs -- no dispatch' },
+  { c: '#ef4444', t: 'Commercial alert: unknown badge attempt -- Executive Floor, AI Deterrence active' },
   { c: '#8b5cf6', t: 'Ontology update: 847 property-type nodes refreshed from nightly training run' },
-  { c: '#14b8a6', t: 'EV charging optimized: Blazer EV → target 90% by 06:00 at $0.08/kWh' },
-  { c: '#10b981', t: 'False alarm suppressed: cat motion, Perimeter Zone 3 — AI classification 97%' },
+  { c: '#14b8a6', t: 'EV charging optimized: Blazer EV -> target 90% by 06:00 at $0.08/kWh' },
+  { c: '#10b981', t: 'False alarm suppressed: cat motion, Perimeter Zone 3 -- AI classification 97%' },
 ];
 
 function useLiveFeed() {
@@ -70,9 +70,9 @@ function useLiveFeed() {
   return feed;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // Camera canvas component
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 function CameraCanvas({ idx, label, status }: { idx: number; label: string; status: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colors = ['#0d2035', '#1a1500', '#1a0d0d'];
@@ -124,9 +124,9 @@ function CameraCanvas({ idx, label, status }: { idx: number; label: string; stat
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // Agent card
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 const AGENTS = [
   { name: 'AI Deterrence Agent', status: 'Active', c: '#10b981', triggers: 847, arr: '91.2%', last: '2 min ago',
     desc: 'Delivers adaptive verbal warnings with context-aware tone and gender. Integrates AID and OpenEye for full situational awareness before engagement.' },
@@ -138,13 +138,13 @@ const AGENTS = [
     desc: 'Shift-aware behavioral baseline for commercial access control. Cross-zone anomaly detection. Unusual entry pattern alerts.' },
   { name: 'Perimeter Guard', status: 'Active', c: '#10b981', triggers: 2341, arr: '84.3%', last: '8 min ago',
     desc: 'Monitors all outdoor sensors 24/7. Auto-escalates on motion with confidence scoring. Hands off to AI Deterrence when appropriate.' },
-  { name: 'Wellness Aegis', status: 'Paused', c: 'var(--text3)', triggers: 0, arr: 'N/A', last: '—',
+  { name: 'Wellness Aegis', status: 'Paused', c: 'var(--text3)', triggers: 0, arr: 'N/A', last: '--',
     desc: 'Tracks occupancy patterns and alerts trusted contacts on unusual inactivity. Paused pending ISO 42001 privacy framework review.' },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // Root App
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [clock, setClock] = useState('');
@@ -159,7 +159,7 @@ export default function App() {
     return () => clearInterval(id);
   }, []);
 
-  // ── Shared layout styles ──────────────────────────────────────────────────
+  // -- Shared layout styles --------------------------------------------------
   const layoutStyle: React.CSSProperties = {
     display: 'grid',
     gridTemplateRows: '56px 1fr',
@@ -192,7 +192,7 @@ export default function App() {
     padding: 24,
   };
 
-  // ── Render helpers ────────────────────────────────────────────────────────
+  // -- Render helpers --------------------------------------------------------
   function HBar({ value, color }: { value: number; color: string }) {
     return (
       <div style={{ height: 6, background: 'var(--bg4)', borderRadius: 3, overflow: 'hidden' }}>
@@ -213,17 +213,17 @@ export default function App() {
     );
   }
 
-  // ── Tab content ───────────────────────────────────────────────────────────
+  // -- Tab content -----------------------------------------------------------
   function renderContent() {
     switch (activeTab) {
 
       case 'dashboard': return (
         <div>
-          <PageHead title="Intelligence Dashboard" sub="Unified view across Security · Energy · Commercial · Partner Network" />
+          <PageHead title="Intelligence Dashboard" sub="Unified view across Security  .  Energy  .  Commercial  .  Partner Network" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
             {[
-              { n: '9.3M', l: 'Connected Subscribers', sub: '↑ 8.2% YoY', c: '#3b82f6' },
-              { n: `${(arrMetrics.resolutionRate*100).toFixed(1)}%`, l: 'AI Resolution Rate', sub: '↑ 12pts vs human-only', c: '#10b981' },
+              { n: '9.3M', l: 'Connected Subscribers', sub: '^ 8.2% YoY', c: '#3b82f6' },
+              { n: `${(arrMetrics.resolutionRate*100).toFixed(1)}%`, l: 'AI Resolution Rate', sub: '^ 12pts vs human-only', c: '#10b981' },
               { n: '1.6M', l: 'Grid-Edge Devices', sub: '44 GWh shifted 2024', c: '#f59e0b' },
               { n: '10,247', l: 'Active Service Providers', sub: '94 AI-tier partners', c: '#8b5cf6' },
             ].map((s, i) => (
@@ -251,9 +251,9 @@ export default function App() {
             <div style={card()}>
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 14 }}>Platform Growth Vectors</div>
               {[
-                { l: 'Commercial SaaS', v: '$80M+ ↑25%', pct: 78, c: '#10b981' },
-                { l: 'EnergyHub SaaS', v: '$50M+ ↑35%', pct: 62, c: '#14b8a6' },
-                { l: 'International Revenue', v: '6% → 10% target', pct: 38, c: '#8b5cf6' },
+                { l: 'Commercial SaaS', v: '$80M+ ^25%', pct: 78, c: '#10b981' },
+                { l: 'EnergyHub SaaS', v: '$50M+ ^35%', pct: 62, c: '#14b8a6' },
+                { l: 'International Revenue', v: '6% -> 10% target', pct: 38, c: '#8b5cf6' },
                 { l: 'AI Resolution Rate', v: '87.4% target: 95%', pct: 87, c: '#3b82f6' },
               ].map((row, i) => (
                 <div key={i} style={{ marginBottom: 12 }}>
@@ -264,15 +264,15 @@ export default function App() {
                 </div>
               ))}
               <div style={{ height: 1, background: 'var(--border)', margin: '10px 0' }} />
-              <div style={{ fontSize: 11, color: 'var(--text3)' }}>AI Platform Intelligence Layer — the compounding moat that unifies all four growth vectors into a single data flywheel.</div>
+              <div style={{ fontSize: 11, color: 'var(--text3)' }}>AI Platform Intelligence Layer -- the compounding moat that unifies all four growth vectors into a single data flywheel.</div>
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
             {[
-              { title: 'SP Intelligence', tag: 'NEW v2', tagC: '#60a5fa', n: '94', sub: 'AI-Tier Partners Active', desc: 'Fleet-wide AI resolution metrics — click to explore.', tab: 'sp' as TabId, tc: '#3b82f6' },
-              { title: 'AI Resolution', tag: 'NEW v2', tagC: '#34d399', n: '87.4%', sub: 'Events Auto-Resolved', desc: 'Outcome-based pricing unlocked — click to explore.', tab: 'arr' as TabId, tc: '#10b981' },
-              { title: 'Commercial AI', tag: 'NEW v2', tagC: '#fcd34d', n: '$80M+', sub: 'Commercial SaaS 2024', desc: '~25% YoY growth, fastest segment — click to explore.', tab: 'commercial' as TabId, tc: '#f59e0b' },
-              { title: 'Domain Ontology', tag: 'NEW v2', tagC: '#a78bfa', n: '847', sub: 'Property-Type Nodes', desc: 'Shared knowledge graph — click to explore.', tab: 'ontology' as TabId, tc: '#8b5cf6' },
+              { title: 'SP Intelligence', tag: 'NEW v2', tagC: '#60a5fa', n: '94', sub: 'AI-Tier Partners Active', desc: 'Fleet-wide AI resolution metrics -- click to explore.', tab: 'sp' as TabId, tc: '#3b82f6' },
+              { title: 'AI Resolution', tag: 'NEW v2', tagC: '#34d399', n: '87.4%', sub: 'Events Auto-Resolved', desc: 'Outcome-based pricing unlocked -- click to explore.', tab: 'arr' as TabId, tc: '#10b981' },
+              { title: 'Commercial AI', tag: 'NEW v2', tagC: '#fcd34d', n: '$80M+', sub: 'Commercial SaaS 2024', desc: '~25% YoY growth, fastest segment -- click to explore.', tab: 'commercial' as TabId, tc: '#f59e0b' },
+              { title: 'Domain Ontology', tag: 'NEW v2', tagC: '#a78bfa', n: '847', sub: 'Property-Type Nodes', desc: 'Shared knowledge graph -- click to explore.', tab: 'ontology' as TabId, tc: '#8b5cf6' },
             ].map((c, i) => (
               <div key={i} onClick={() => setActiveTab(c.tab)} style={{ ...card({ cursor: 'pointer', borderColor: `${c.tc}30`, transition: 'border-color .2s' }) }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = c.tc)}
@@ -292,18 +292,18 @@ export default function App() {
 
       case 'cameras': return (
         <div>
-          <PageHead title="Camera Intelligence" sub="AI bounding box detection · Natural language video search · RVM integration" />
+          <PageHead title="Camera Intelligence" sub="AI bounding box detection  .  Natural language video search  .  RVM integration" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
-            <CameraCanvas idx={0} label="Front Door · 4K" status="Normal" />
-            <CameraCanvas idx={1} label="Garage · AI Active" status="Watching" />
-            <CameraCanvas idx={2} label="Perimeter · Alert" status="Alert" />
+            <CameraCanvas idx={0} label="Front Door  .  4K" status="Normal" />
+            <CameraCanvas idx={1} label="Garage  .  AI Active" status="Watching" />
+            <CameraCanvas idx={2} label="Perimeter  .  Alert" status="Alert" />
           </div>
         </div>
       );
 
       case 'agents': return (
         <div>
-          <PageHead title="AI Agent Hub" sub="6 autonomous agents — unified AI workforce across security, energy, and access" />
+          <PageHead title="AI Agent Hub" sub="6 autonomous agents -- unified AI workforce across security, energy, and access" />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {AGENTS.map((ag, i) => (
               <div key={i} style={{ ...card({ borderColor: `${ag.c}30` }) }}>
@@ -317,7 +317,7 @@ export default function App() {
                 </div>
                 <div style={{ fontSize: 12, color: ag.status === 'Paused' ? 'var(--text3)' : 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>{ag.desc}</div>
                 <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: 'var(--text3)' }}>
-                  Triggers: {ag.triggers.toLocaleString()} · ARR: {ag.arr} · Last: {ag.last}
+                  Triggers: {ag.triggers.toLocaleString()}  .  ARR: {ag.arr}  .  Last: {ag.last}
                 </div>
               </div>
             ))}
@@ -325,25 +325,25 @@ export default function App() {
         </div>
       );
 
-      case 'energyhub':   return <div><PageHead title="EnergyHub + EV Grid Intelligence" sub="$50M+ SaaS · 1.6M grid-edge devices · GM EV partnership" v2 /><EvGrid /></div>;
+      case 'energyhub':   return <div><PageHead title="EnergyHub + EV Grid Intelligence" sub="$50M+ SaaS  .  1.6M grid-edge devices  .  GM EV partnership" v2 /><EvGrid /></div>;
       case 'sp':          return <div><PageHead title="Service Provider Intelligence" sub="Fleet-wide AI performance metrics for 10,247 active partners" v2 /><SpIntelligence /></div>;
-      case 'arr':         return <div><PageHead title="AI Resolution Rate (ARR) Metrics" sub="Outcome-based pricing proof point — from monitoring events to autonomous resolutions" v2 /><ArrMetrics /></div>;
-      case 'commercial':  return <div><PageHead title="Commercial Property Intelligence" sub="AI-native operations for commercial — $80M+ SaaS, fastest growing at ~25% YoY" v2 /><CommercialAI /></div>;
-      case 'ontology':    return <div><PageHead title="Domain Intelligence Ontology" sub="The shared knowledge graph unifying AID · EnergyHub · OpenEye · CHeKT" v2 /><DomainOntology /></div>;
+      case 'arr':         return <div><PageHead title="AI Resolution Rate (ARR) Metrics" sub="Outcome-based pricing proof point -- from monitoring events to autonomous resolutions" v2 /><ArrMetrics /></div>;
+      case 'commercial':  return <div><PageHead title="Commercial Property Intelligence" sub="AI-native operations for commercial -- $80M+ SaaS, fastest growing at ~25% YoY" v2 /><CommercialAI /></div>;
+      case 'ontology':    return <div><PageHead title="Domain Intelligence Ontology" sub="The shared knowledge graph unifying AID  .  EnergyHub  .  OpenEye  .  CHeKT" v2 /><DomainOntology /></div>;
 
       case 'digital': return (
         <div>
-          <PageHead title="3D Digital Twin" sub="Live Three.js property rendering — Security / Energy / Combined view modes" />
+          <PageHead title="3D Digital Twin" sub="Live Three.js property rendering -- Security / Energy / Combined view modes" />
           <div style={{ ...card({ textAlign: 'center', padding: '60px 24px' }) }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>⬡</div>
-            <div style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 8 }}>3D Digital Twin — Full implementation in Aegis v1</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>H</div>
+            <div style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 8 }}>3D Digital Twin -- Full implementation in Aegis v1</div>
             <div style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 20, lineHeight: 1.6 }}>
-              Three.js r128 · Orthographic camera · Security + Energy + Combined modes<br />
-              Drag-to-rotate · Camera FoV cones · Motion heatmap zones · Light zone efficiency halos<br />
-              Reactive energy layer: React state → useRef → Three.js animation loop (no remount)
+              Three.js r128  .  Orthographic camera  .  Security + Energy + Combined modes<br />
+              Drag-to-rotate  .  Camera FoV cones  .  Motion heatmap zones  .  Light zone efficiency halos<br />
+              Reactive energy layer: React state -> useRef -> Three.js animation loop (no remount)
             </div>
             <a href="https://aegis-five-theta.vercel.app" target="_blank" rel="noreferrer" style={{ display: 'inline-block', padding: '8px 20px', background: 'var(--accent)', color: 'white', borderRadius: 8, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>
-              Open Live v1 Demo ↗
+              Open Live v1 Demo ->
             </a>
           </div>
         </div>
@@ -351,12 +351,12 @@ export default function App() {
 
       case 'analytics': return (
         <div>
-          <PageHead title="Platform Analytics" sub="Cross-property intelligence · AI performance trends · Business metrics" />
+          <PageHead title="Platform Analytics" sub="Cross-property intelligence  .  AI performance trends  .  Business metrics" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
             {[
-              { n: '$631M', l: 'SaaS Revenue 2024', sub: '↑ 10.9% YoY', c: '#3b82f6' },
+              { n: '$631M', l: 'SaaS Revenue 2024', sub: '^ 10.9% YoY', c: '#3b82f6' },
               { n: '87.4%', l: 'Platform ARR', sub: 'Target: 95% Q4 2025', c: '#10b981' },
-              { n: '$122.5M', l: 'GAAP Net Income 2024', sub: '↑ 53% from $80.3M', c: '#f59e0b' },
+              { n: '$122.5M', l: 'GAAP Net Income 2024', sub: '^ 53% from $80.3M', c: '#f59e0b' },
               { n: '$176M', l: 'Adj. EBITDA 2024', sub: 'Strong operational leverage', c: '#8b5cf6' },
             ].map((s, i) => (
               <div key={i} style={{ ...statCard() }}>
@@ -368,12 +368,12 @@ export default function App() {
             ))}
           </div>
           <div style={card()}>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 14 }}>AI Platform ROI Model — The Business Case</div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 14 }}>AI Platform ROI Model -- The Business Case</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
               {[
                 { n: '$340M', l: 'ARR Improvement Value', sub: 'Addressable outcome premium at current scale, $4/resolved event', c: '#34d399' },
                 { n: '$71M', l: 'SP AI-Tier Pipeline', sub: 'Incremental ARR if 2,847 standard SPs upgrade', c: '#fcd34d' },
-                { n: '10×', l: 'Data Flywheel Moat', sub: 'Model accuracy advantage from 9.3M-subscriber unified ontology', c: '#a78bfa' },
+                { n: '10x', l: 'Data Flywheel Moat', sub: 'Model accuracy advantage from 9.3M-subscriber unified ontology', c: '#a78bfa' },
               ].map((s, i) => (
                 <div key={i} style={{ background: 'var(--bg3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
                   <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 30, fontWeight: 800, color: s.c, letterSpacing: -1 }}>{s.n}</div>
@@ -390,7 +390,7 @@ export default function App() {
     }
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // -- Render ----------------------------------------------------------------
   return (
     <>
       <style>{`
@@ -439,7 +439,7 @@ export default function App() {
         <div style={sidebarStyle}>
           {[
             { sectionLabel: 'Core Platform', items: NAV.filter(n => !n.v2) },
-            { sectionLabel: 'Aegis v2 — New', items: NAV.filter(n => n.v2) },
+            { sectionLabel: 'Aegis v2 -- New', items: NAV.filter(n => n.v2) },
           ].map(({ sectionLabel, items }) => (
             <div key={sectionLabel} style={{ padding: '0 12px', marginBottom: 4 }}>
               <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--text3)', padding: '8px 8px 4px' }}>{sectionLabel}</div>

@@ -6,7 +6,7 @@ import type {
   PropertyMode,
 } from '@/types';
 
-// ── Seed data ──────────────────────────────────────────────────────────────
+// -- Seed data --------------------------------------------------------------
 
 const SEED_SPS: ServiceProvider[] = [
   { id: 'sp1', name: 'Guardian Security (MD)', location: 'McLean, VA', tier: 'enterprise-ai',
@@ -30,11 +30,11 @@ const SEED_SPS: ServiceProvider[] = [
 ];
 
 const SEED_ZONES: CommercialZone[] = [
-  { id: 'z1', name: 'Main Lobby', hours: '07:00–22:00', clearanceLevel: 1,
+  { id: 'z1', name: 'Main Lobby', hours: '07:00-22:00', clearanceLevel: 1,
     occupiedNow: true, threatScore: 1.2, threatLevel: 'normal', cameras: 4, activeAlerts: 0 },
   { id: 'z2', name: 'Server Room', hours: 'Restricted', clearanceLevel: 4,
     occupiedNow: false, threatScore: 5.8, threatLevel: 'elevated', cameras: 2, activeAlerts: 1 },
-  { id: 'z3', name: 'Loading Dock', hours: '06:00–18:00', clearanceLevel: 2,
+  { id: 'z3', name: 'Loading Dock', hours: '06:00-18:00', clearanceLevel: 2,
     occupiedNow: false, threatScore: 3.4, threatLevel: 'watch', cameras: 3, activeAlerts: 0 },
   { id: 'z4', name: 'Executive Floor', hours: 'Level 4 only', clearanceLevel: 4,
     occupiedNow: false, threatScore: 8.1, threatLevel: 'alert', cameras: 6, activeAlerts: 2 },
@@ -50,7 +50,7 @@ const SEED_ONTOLOGY: OntologyNode[] = [
     connections: ['residential', 'commercial', 'multifamily', 'enterprise', 'threat-patterns', 'energy-profiles', 'behavioral-baselines'],
     entityCount: 0 },
   { id: 'residential', label: 'Residential', domain: 'property',
-    description: 'Single-family, townhouse, condo, vacation, and rental properties. Each sub-type carries distinct threat pattern distributions, energy profiles, and behavioral baselines. Vacation properties encode an expected-absence baseline — AID and PEMS respond differently than for a primary residence.',
+    description: 'Single-family, townhouse, condo, vacation, and rental properties. Each sub-type carries distinct threat pattern distributions, energy profiles, and behavioral baselines. Vacation properties encode an expected-absence baseline -- AID and PEMS respond differently than for a primary residence.',
     connections: ['property-intel', 'aid', 'energyhub', 'behavioral-baselines'], entityCount: 6840000 },
   { id: 'commercial', label: 'Commercial', domain: 'property',
     description: 'Retail, office, and light industrial. Requires shift-aware behavioral modeling, role-hierarchy access control, and multi-zone threat scoring. OpenEye camera zones, AID deterrence zones, and EnergyHub load zones are correlated through this node.',
@@ -61,23 +61,23 @@ const SEED_ONTOLOGY: OntologyNode[] = [
   { id: 'enterprise', label: 'Enterprise', domain: 'property',
     description: 'Office campuses, government facilities, industrial sites. Shift-aware access control, multi-zone threat scoring, and Shooter Detection Systems integration are enterprise-specific branches added in v2.',
     connections: ['property-intel', 'openeye', 'rvm', 'smart-access'], entityCount: 280000 },
-  { id: 'aid', label: 'AID · Deterrence', domain: 'security',
-    description: 'AI Deterrence contributes threat events, deterrence outcomes, and adaptive voice interaction results. Events are cross-referenced with property type and time-of-day to train threat pattern nodes — each resolution improves future deterrence precision.',
+  { id: 'aid', label: 'AID  .  Deterrence', domain: 'security',
+    description: 'AI Deterrence contributes threat events, deterrence outcomes, and adaptive voice interaction results. Events are cross-referenced with property type and time-of-day to train threat pattern nodes -- each resolution improves future deterrence precision.',
     connections: ['property-intel', 'rvm', 'threat-patterns', 'behavioral-baselines'], entityCount: 142000 },
-  { id: 'rvm', label: 'RVM · CHeKT', domain: 'security',
-    description: 'Remote Video Monitoring plus CHeKT (acquired Feb 2025) enables RVM for central stations with third-party cameras. The ontology connects CHeKT\'s on-premise model with ADC\'s cloud AI — central station operators benefit from ADC\'s AI classification without hardware replacement.',
+  { id: 'rvm', label: 'RVM  .  CHeKT', domain: 'security',
+    description: 'Remote Video Monitoring plus CHeKT (acquired Feb 2025) enables RVM for central stations with third-party cameras. The ontology connects CHeKT\'s on-premise model with ADC\'s cloud AI -- central station operators benefit from ADC\'s AI classification without hardware replacement.',
     connections: ['property-intel', 'aid', 'openeye', 'threat-patterns'], entityCount: 1204 },
   { id: 'openeye', label: 'OpenEye Video', domain: 'security',
     description: 'Enterprise-grade video analytics: license plate recognition, people counting, loitering detection, scene classification. Cross-referenced with AID deterrence model, OpenEye events become the richest input into threat pattern training.',
     connections: ['property-intel', 'rvm', 'aid', 'threat-patterns'], entityCount: 2000000 },
   { id: 'energyhub', label: 'EnergyHub PEMS', domain: 'energy',
-    description: 'Contributes DER state, TOU pricing windows, grid demand signals, and occupancy-intent states. The PEMS priority stack (Safety → Security → Energy) is enforced at the ontology level — no energy optimization can compromise the Security Mesh.',
+    description: 'Contributes DER state, TOU pricing windows, grid demand signals, and occupancy-intent states. The PEMS priority stack (Safety -> Security -> Energy) is enforced at the ontology level -- no energy optimization can compromise the Security Mesh.',
     connections: ['property-intel', 'ev-grid', 'nilm', 'energy-profiles'], entityCount: 1600000 },
-  { id: 'ev-grid', label: 'EV · Grid-Edge', domain: 'energy',
-    description: 'Added in v2 following the EnergyHub–GM partnership. EV charging schedules are a new DER class — their patterns interact with TOU windows, demand response signals, and battery SOC. Connects to both the Energy Optimizer agent and NILM anomaly detection.',
+  { id: 'ev-grid', label: 'EV  .  Grid-Edge', domain: 'energy',
+    description: 'Added in v2 following the EnergyHub-GM partnership. EV charging schedules are a new DER class -- their patterns interact with TOU windows, demand response signals, and battery SOC. Connects to both the Energy Optimizer agent and NILM anomaly detection.',
     connections: ['energyhub', 'nilm', 'energy-profiles'], entityCount: 48000 },
-  { id: 'nilm', label: 'NILM · Load AI', domain: 'energy',
-    description: 'Non-Intrusive Load Monitoring detects appliance signatures from aggregate power draw. NILM anomalies (HVAC deviation, unexpected high-draw events) feed both Energy Optimizer and — in commercial properties — the threat detection model. A running appliance at 3AM is a meaningful security signal.',
+  { id: 'nilm', label: 'NILM  .  Load AI', domain: 'energy',
+    description: 'Non-Intrusive Load Monitoring detects appliance signatures from aggregate power draw. NILM anomalies (HVAC deviation, unexpected high-draw events) feed both Energy Optimizer and -- in commercial properties -- the threat detection model. A running appliance at 3AM is a meaningful security signal.',
     connections: ['energyhub', 'ev-grid', 'threat-patterns'], entityCount: 3200000 },
   { id: 'threat-patterns', label: 'Threat Patterns', domain: 'behavioral',
     description: '142 distinct threat pattern types derived from 9.3M subscribers and 2B+ annual events. Patterns are property-type-aware (retail differs from residential), time-aware (after-hours vs. business hours), and device-aware (camera classification vs. sensor vs. access badge).',
@@ -86,7 +86,7 @@ const SEED_ONTOLOGY: OntologyNode[] = [
     description: '89 distinct energy profiles mapped to property types, climate zones, occupancy patterns, and device inventories. Used by PEMS for baseline expectations and by NILM for anomaly detection. EV profiles were added in v2 following the GM partnership.',
     connections: ['property-intel', 'energyhub', 'behavioral-baselines'], entityCount: 89 },
   { id: 'behavioral-baselines', label: 'Behavioral Baselines', domain: 'behavioral',
-    description: 'The most valuable node class in the ontology. Baselines encode what "normal" looks like for each property × time × device combination. AI resolution accuracy is directly proportional to baseline precision — which is why the 9.3M-subscriber training corpus is a structural competitive moat.',
+    description: 'The most valuable node class in the ontology. Baselines encode what "normal" looks like for each property x time x device combination. AI resolution accuracy is directly proportional to baseline precision -- which is why the 9.3M-subscriber training corpus is a structural competitive moat.',
     connections: ['property-intel', 'threat-patterns', 'energy-profiles'], entityCount: 847 },
   { id: 'smart-access', label: 'Smart Access', domain: 'security',
     description: 'Shift-aware access control with role-hierarchy modeling. Cross-zone anomaly detection identifies movement patterns inconsistent with an employee\'s role and shift schedule. Anomalous access events feed both the threat pattern training set and the SP intelligence dashboard.',
@@ -119,7 +119,7 @@ const SEED_ARR: ArrMetrics = {
   windowDays: 30,
 };
 
-// ── Store ──────────────────────────────────────────────────────────────────
+// -- Store ------------------------------------------------------------------
 
 interface V2State {
   propertyMode: PropertyMode;

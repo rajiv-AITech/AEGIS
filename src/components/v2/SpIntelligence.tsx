@@ -43,7 +43,7 @@ export default function SpIntelligence() {
     setLoadingInsight(true);
     spAnalysis(serviceProviders)
       .then(setAiInsight)
-      .catch(() => setAiInsight('AI analysis unavailable — check API key in .env'))
+      .catch(() => setAiInsight('AI analysis unavailable -- check API key in .env'))
       .finally(() => setLoadingInsight(false));
   }, []);
 
@@ -52,8 +52,8 @@ export default function SpIntelligence() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
         {[
-          { n: serviceProviders.length.toLocaleString(), l: 'Active SPs', sub: '↑ 847 this year', c: '#3b82f6' },
-          { n: aiTierSPs.length, l: 'AI-Tier Partners', sub: 'New tier — Q1 2025', c: '#10b981' },
+          { n: serviceProviders.length.toLocaleString(), l: 'Active SPs', sub: '^ 847 this year', c: '#3b82f6' },
+          { n: aiTierSPs.length, l: 'AI-Tier Partners', sub: 'New tier -- Q1 2025', c: '#10b981' },
           { n: `${upgradeReady.length}`, l: 'Upgrade-Ready SPs', sub: `~$71M incremental ARR`, c: '#f59e0b' },
           { n: `${(avgAiArr * 100).toFixed(1)}%`, l: 'Avg ARR (AI-tier)', sub: 'vs 61% standard', c: '#8b5cf6' },
         ].map((s, i) => (
@@ -95,7 +95,7 @@ export default function SpIntelligence() {
                 <tr key={sp.id} style={{ cursor: 'pointer' }}>
                   <td style={{ padding: '9px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', verticalAlign: 'middle' }}>
                     <div style={{ fontWeight: 500, color: 'var(--text)', fontSize: 13 }}>{sp.name}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text3)' }}>{sp.location} · {sp.yearsPartner}yr partner</div>
+                    <div style={{ fontSize: 10, color: 'var(--text3)' }}>{sp.location}  .  {sp.yearsPartner}yr partner</div>
                   </td>
                   <td style={{ padding: '9px 10px', borderBottom: '1px solid rgba(255,255,255,0.04)', verticalAlign: 'middle' }}>
                     <span style={{
@@ -147,7 +147,7 @@ export default function SpIntelligence() {
         <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
           <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 12 }}>AI-Tier Monetization Model</div>
           <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 12 }}>
-            Standard tier prices per subscriber. AI-tier prices <strong style={{ color: 'var(--text)' }}>per outcome</strong> — verified AI resolutions, energy savings, false alarm reductions. This transforms SPs from connectivity resellers into intelligence service providers.
+            Standard tier prices per subscriber. AI-tier prices <strong style={{ color: 'var(--text)' }}>per outcome</strong> -- verified AI resolutions, energy savings, false alarm reductions. This transforms SPs from connectivity resellers into intelligence service providers.
           </p>
           {[
             { c: '#3b82f6', t: 'Base:', d: '$X per subscriber/month (unchanged)' },
@@ -164,14 +164,14 @@ export default function SpIntelligence() {
           ))}
         </div>
         <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 10, padding: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 12 }}>Upgrade Pipeline — Incremental ARR</div>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 12 }}>Upgrade Pipeline -- Incremental ARR</div>
           <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 40, fontWeight: 800, color: '#fcd34d', letterSpacing: -1 }}>$71.2M</div>
           <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 14 }}>If {upgradeReady.length * 283} standard SPs upgrade to AI-tier at current ARPU</div>
           {upgradeReady.map(sp => (
             <div key={sp.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#f59e0b', flexShrink: 0 }} />
               <div style={{ fontSize: 12, color: 'var(--text2)' }}>
-                <strong style={{ color: 'var(--text)' }}>{sp.name}</strong> — {(sp.aiResolutionRate * 100).toFixed(0)}% vs 91% AI-tier avg → clear value prop
+                <strong style={{ color: 'var(--text)' }}>{sp.name}</strong> -- {(sp.aiResolutionRate * 100).toFixed(0)}% vs 91% AI-tier avg -> clear value prop
               </div>
             </div>
           ))}

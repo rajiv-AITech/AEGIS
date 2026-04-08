@@ -13,12 +13,12 @@ const AGENT_COLORS: Record<string, string> = {
 };
 
 const EVENT_TEMPLATES = [
-  { type: 'Motion · Perimeter', agent: 'Perimeter Guard', disp: 'auto-resolved' as const, conf: 0.94 },
-  { type: 'Video Alert · Front Door', agent: 'Remote Video Monitor', disp: 'auto-resolved' as const, conf: 0.91 },
-  { type: 'Access Anomaly · Server', agent: 'Smart Access Controller', disp: 'escalated' as const, conf: 0.73 },
-  { type: 'NILM Spike · HVAC', agent: 'Energy Optimizer', disp: 'auto-resolved' as const, conf: 0.97 },
-  { type: 'Perimeter Breach · Cam2', agent: 'AI Deterrence', disp: 'auto-resolved' as const, conf: 0.89 },
-  { type: 'Unknown Badge · Exec Floor', agent: 'Smart Access Controller', disp: 'dispatched' as const, conf: 0.99 },
+  { type: 'Motion  .  Perimeter', agent: 'Perimeter Guard', disp: 'auto-resolved' as const, conf: 0.94 },
+  { type: 'Video Alert  .  Front Door', agent: 'Remote Video Monitor', disp: 'auto-resolved' as const, conf: 0.91 },
+  { type: 'Access Anomaly  .  Server', agent: 'Smart Access Controller', disp: 'escalated' as const, conf: 0.73 },
+  { type: 'NILM Spike  .  HVAC', agent: 'Energy Optimizer', disp: 'auto-resolved' as const, conf: 0.97 },
+  { type: 'Perimeter Breach  .  Cam2', agent: 'AI Deterrence', disp: 'auto-resolved' as const, conf: 0.89 },
+  { type: 'Unknown Badge  .  Exec Floor', agent: 'Smart Access Controller', disp: 'dispatched' as const, conf: 0.99 },
 ];
 
 export default function ArrMetricsPanel() {
@@ -31,7 +31,7 @@ export default function ArrMetricsPanel() {
     setLoading(true);
     arrInsight(arrMetrics)
       .then(setInsight)
-      .catch(() => setInsight('AI insight unavailable — check API key in .env'))
+      .catch(() => setInsight('AI insight unavailable -- check API key in .env'))
       .finally(() => setLoading(false));
 
     // Simulate live event stream
@@ -66,7 +66,7 @@ export default function ArrMetricsPanel() {
             {(arrMetrics.resolutionRate * 100).toFixed(1)}%
           </div>
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: 'var(--text3)', marginTop: 4, letterSpacing: 0.5 }}>
-            AI RESOLUTION RATE — {arrMetrics.windowDays}-DAY ROLLING
+            AI RESOLUTION RATE -- {arrMetrics.windowDays}-DAY ROLLING
           </div>
           <div style={{ height: 1, background: 'var(--border)', margin: '14px 0' }} />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -92,7 +92,7 @@ export default function ArrMetricsPanel() {
 
         {/* Funnel */}
         <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 16 }}>Resolution Funnel — 30 Days</div>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 16 }}>Resolution Funnel -- 30 Days</div>
           {[
             { label: `${arrMetrics.totalEvents.toLocaleString()} events detected`, pct: 1, c: 'rgba(59,130,246,0.25)', t: '#60a5fa' },
             { label: `${arrMetrics.autoResolved.toLocaleString()} auto-resolved (${(arrMetrics.resolutionRate * 100).toFixed(1)}%)`, pct: arrMetrics.resolutionRate, c: 'rgba(16,185,129,0.2)', t: '#34d399' },
@@ -104,7 +104,7 @@ export default function ArrMetricsPanel() {
                 {row.pct > 0.15 ? row.label : ''}
               </div>
               {row.pct <= 0.15 && <div style={{ fontSize: 11, color: row.t, marginBottom: 4, paddingLeft: 4 }}>{row.label}</div>}
-              {i < 3 && <div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 8, paddingLeft: 4 }}>↓ AI processing</div>}
+              {i < 3 && <div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 8, paddingLeft: 4 }}>v AI processing</div>}
             </div>
           ))}
         </div>
